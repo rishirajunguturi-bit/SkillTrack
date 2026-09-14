@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { PageWrapper } from '@/components/ui/PageWrapper';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { SkillGapAnalysis } from '@/types/skillGap';
 
 export default function SkillGapPage() {
@@ -36,7 +37,7 @@ export default function SkillGapPage() {
     mutationFn: () => skillGapService.recalculateSkillGap(),
     onSuccess: (data) => {
       queryClient.setQueryData(['skill-gap-analysis'], data);
-      toast.success('Skill Gap Analysis updated successfully!');
+      toast.success('Skill gap analysis updated successfully!');
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || 'Failed to recalculate skill gap analysis.');
@@ -46,12 +47,12 @@ export default function SkillGapPage() {
   if (isLoading) {
     return (
       <PageWrapper className="max-w-6xl mx-auto space-y-6">
-        <Skeleton className="h-28 w-full rounded-sm bg-[#0A0A0A]" />
+        <Skeleton className="h-28 w-full rounded-xl bg-surface-secondary" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Skeleton className="h-64 rounded-sm bg-[#0A0A0A]" />
-          <Skeleton className="h-64 md:col-span-2 rounded-sm bg-[#0A0A0A]" />
+          <Skeleton className="h-64 rounded-xl bg-surface-secondary" />
+          <Skeleton className="h-64 md:col-span-2 rounded-xl bg-surface-secondary" />
         </div>
-        <Skeleton className="h-96 w-full rounded-sm bg-[#0A0A0A]" />
+        <Skeleton className="h-96 w-full rounded-xl bg-surface-secondary" />
       </PageWrapper>
     );
   }
@@ -60,16 +61,16 @@ export default function SkillGapPage() {
     const errMsg = (error as any)?.response?.data?.message || 'No target career role selected.';
     return (
       <PageWrapper className="max-w-4xl mx-auto py-12 text-center space-y-6">
-        <div className="p-8 rounded-sm bg-[#0A0A0A] border border-white/10 text-white max-w-md mx-auto space-y-4 font-mono">
-          <div className="h-16 w-16 rounded-sm bg-[#111111] text-[#FFD400] flex items-center justify-center mx-auto border border-[#FFD400]/40">
-            <Target className="h-8 w-8 text-[#FFD400]" />
+        <div className="p-8 rounded-xl bg-card border border-border text-foreground max-w-md mx-auto space-y-4 shadow-xs">
+          <div className="h-14 w-14 rounded-full bg-blue-50 dark:bg-blue-950/40 text-primary flex items-center justify-center mx-auto border border-blue-200 dark:border-blue-800">
+            <Target className="h-7 w-7" />
           </div>
-          <h2 className="text-2xl font-extrabold uppercase text-white">Target Role Required</h2>
-          <p className="text-xs text-zinc-400 font-sans leading-relaxed">{errMsg}</p>
+          <h2 className="text-xl font-bold text-foreground">Target role required</h2>
+          <p className="text-xs text-muted-foreground leading-relaxed">{errMsg}</p>
           <Link href="/profile">
-            <Button className="w-full bg-[#FFD400] hover:bg-[#FFE033] text-black font-extrabold text-xs uppercase gap-2">
-              Select Target Career Role
-              <ArrowRight className="h-4 w-4 text-black" />
+            <Button variant="primary" className="w-full text-xs gap-2">
+              Select target career role
+              <ArrowRight className="h-4 w-4 text-white" />
             </Button>
           </Link>
         </div>
@@ -91,11 +92,11 @@ export default function SkillGapPage() {
     aiInsights = [],
   } = analysis;
 
-  const labelBadgeMap = {
-    READY: { label: 'READY FOR ROLE', bg: 'bg-[#FFD400]/20 text-[#FFD400] border-[#FFD400]' },
-    NEARLY_READY: { label: 'NEARLY READY', bg: 'bg-emerald-950/60 text-emerald-300 border-emerald-500' },
-    DEVELOPING: { label: 'DEVELOPING', bg: 'bg-zinc-800 text-white border-white/20' },
-    EARLY_STAGE: { label: 'EARLY STAGE', bg: 'bg-rose-950/60 text-rose-300 border-rose-500' },
+  const labelBadgeMap: Record<string, { label: string; variant: 'blue' | 'success' | 'outline' | 'error' }> = {
+    READY: { label: 'Ready for role', variant: 'blue' },
+    NEARLY_READY: { label: 'Nearly ready', variant: 'success' },
+    DEVELOPING: { label: 'Developing', variant: 'outline' },
+    EARLY_STAGE: { label: 'Early stage', variant: 'error' },
   };
 
   const currentLabelInfo = labelBadgeMap[readinessLabel] || labelBadgeMap.DEVELOPING;
@@ -114,40 +115,31 @@ export default function SkillGapPage() {
 
   return (
     <PageWrapper className="max-w-6xl mx-auto space-y-6">
-      {/* Top Banner & Header */}
-      <div className="p-6 rounded-sm bg-[#0A0A0A] text-white border border-white/10 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="relative z-10 space-y-1">
-          <div className="flex items-center gap-2 text-[#FFD400] text-xs font-mono font-bold uppercase tracking-wider">
-            <Target className="h-4 w-4 text-[#FFD400]" />
-            SKILL GAP ANALYSIS ENGINE
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold uppercase text-white tracking-tight flex items-center gap-3">
-            {careerRoleName}
-          </h1>
-          <p className="text-xs text-zinc-400 font-sans">
-            Real-time evaluation against role requirements using assessment data and profile skills.
-          </p>
-        </div>
-
-        <Button
-          onClick={() => analyzeMutation.mutate()}
-          isLoading={analyzeMutation.isPending}
-          variant="secondary"
-          className="relative z-10 font-mono font-bold text-xs uppercase gap-2 shrink-0"
-        >
-          <RotateCw className={`h-4 w-4 ${analyzeMutation.isPending ? 'animate-spin' : ''}`} />
-          Analyze My Skills
-        </Button>
-      </div>
+      {/* Header */}
+      <PageHeader
+        title={`${careerRoleName} Skill Gap Analysis`}
+        description="Real-time evaluation against role requirements using assessment data and profile skills."
+        action={
+          <Button
+            onClick={() => analyzeMutation.mutate()}
+            isLoading={analyzeMutation.isPending}
+            variant="secondary"
+            className="text-xs gap-2 shrink-0"
+          >
+            <RotateCw className={`h-4 w-4 ${analyzeMutation.isPending ? 'animate-spin' : ''}`} />
+            Recalculate analysis
+          </Button>
+        }
+      />
 
       {/* Overview Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-mono">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Overall Readiness Ring Card */}
-        <Card className="rounded-sm flex flex-col justify-between">
+        <Card className="rounded-xl flex flex-col justify-between">
           <CardHeader className="p-6 pb-2 border-b border-border">
-            <CardTitle className="font-mono text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-              <Award className="h-4 w-4 text-[#FFD400]" />
-              Career Skill Readiness
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <Award className="h-4 w-4 text-primary" />
+              Career skill readiness
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-3">
@@ -166,52 +158,52 @@ export default function SkillGapPage() {
                   cx="72"
                   cy="72"
                   r="60"
-                  stroke="#FFD400"
+                  stroke="#2563EB"
                   strokeWidth="12"
                   strokeDasharray={377}
                   strokeDashoffset={377 - (377 * overallReadiness) / 100}
                   className="transition-all duration-1000 ease-out"
                   fill="transparent"
-                  strokeLinecap="square"
+                  strokeLinecap="round"
                 />
               </svg>
               <div className="absolute flex flex-col items-center">
-                <span className="text-4xl font-extrabold text-[#FFD400]">
+                <span className="text-3xl font-extrabold text-primary">
                   {overallReadiness}%
                 </span>
-                <span className="text-[10px] text-muted-foreground uppercase font-bold">Readiness</span>
+                <span className="text-xs text-muted-foreground font-medium">Readiness</span>
               </div>
             </div>
 
-            <Badge variant="default" className={`px-3 py-1 font-bold text-xs uppercase ${currentLabelInfo.bg}`}>
+            <Badge variant={currentLabelInfo.variant} className="px-3 py-1 text-xs">
               {currentLabelInfo.label}
             </Badge>
           </CardContent>
         </Card>
 
         {/* AI Strategic Insights Card */}
-        <Card className="md:col-span-2 rounded-sm">
+        <Card className="md:col-span-2 rounded-xl">
           <CardHeader className="p-6 pb-2 border-b border-border flex flex-row justify-between items-center">
-            <CardTitle className="text-xl font-bold uppercase text-card-foreground flex items-center gap-2">
-              <Brain className="h-5 w-5 text-[#FFD400]" />
-              AI STRATEGIC INSIGHTS & ADVISOR SUMMARY
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary" />
+              AI strategic insights & advisor summary
             </CardTitle>
-            <Badge variant="default" className="text-[10px] font-mono font-bold uppercase bg-[#FFD400]/10 text-[#FFD400] border-[#FFD400]/40">
-              Gemini AI
+            <Badge variant="blue" className="text-xs">
+              AI advisor
             </Badge>
           </CardHeader>
-          <CardContent className="p-6 space-y-4 text-xs font-sans">
-            <p className="text-foreground leading-relaxed font-medium bg-surface-secondary p-4 rounded-sm border border-border">
+          <CardContent className="p-6 space-y-4 text-xs">
+            <p className="text-foreground leading-relaxed font-medium bg-surface-secondary/50 p-4 rounded-xl border border-border">
               {aiSummary}
             </p>
 
             {aiInsights.length > 0 && (
-              <div className="space-y-2 font-mono">
-                <h4 className="font-bold text-[#FFD400] text-xs uppercase">Key Priorities:</h4>
-                <ul className="space-y-1.5 font-sans">
+              <div className="space-y-2">
+                <h4 className="font-semibold text-foreground text-xs">Key priorities:</h4>
+                <ul className="space-y-1.5">
                   {aiInsights.map((insight, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-muted-foreground">
-                      <Sparkles className="h-3.5 w-3.5 text-[#FFD400] shrink-0 mt-0.5" />
+                      <Sparkles className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
                       <span>{insight}</span>
                     </li>
                   ))}
@@ -224,34 +216,34 @@ export default function SkillGapPage() {
 
       {/* Top 3 Priorities Section */}
       {topPriorities.length > 0 && (
-        <Card className="rounded-sm font-mono">
+        <Card className="rounded-xl">
           <CardHeader className="p-6 pb-3 border-b border-border">
-            <CardTitle className="text-xl font-extrabold uppercase text-card-foreground flex items-center gap-2">
-              <Zap className="h-5 w-5 text-[#FFD400]" />
-              TOP RECOMMENDED FOCUS AREAS
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Zap className="h-5 w-5 text-primary" />
+              Top recommended focus areas
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
             {topPriorities.slice(0, 3).map((item, idx) => (
               <div
                 key={item.skillId}
-                className="p-4 rounded-sm bg-surface-secondary border border-border space-y-2 relative font-sans"
+                className="p-4 rounded-xl bg-surface-secondary/50 border border-border space-y-2 relative"
               >
-                <div className="flex justify-between items-start font-mono">
-                  <span className="h-5 w-5 rounded-sm bg-[#FFD400] text-black font-bold text-xs flex items-center justify-center">
+                <div className="flex justify-between items-start">
+                  <span className="h-5 w-5 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center">
                     {idx + 1}
                   </span>
                   <Badge
-                    variant="default"
-                    className="text-[9px] py-0 font-bold uppercase bg-[#FFD400]/10 text-[#FFD400] border-[#FFD400]/40"
+                    variant="blue"
+                    className="text-xs"
                   >
                     {item.priority}
                   </Badge>
                 </div>
-                <h4 className="font-bold text-lg text-card-foreground uppercase">{item.name}</h4>
-                <div className="flex justify-between items-center text-xs text-muted-foreground font-mono">
+                <h4 className="font-semibold text-base text-foreground">{item.name}</h4>
+                <div className="flex justify-between items-center text-xs text-muted-foreground">
                   <span>Current: {item.currentProficiency}%</span>
-                  <span className="font-bold text-[#FFD400]">Target: {item.recommendedProficiency}%</span>
+                  <span className="font-semibold text-primary">Target: {item.recommendedProficiency}%</span>
                 </div>
               </div>
             ))}
@@ -260,57 +252,57 @@ export default function SkillGapPage() {
       )}
 
       {/* Skill Categories Tabs & Grids */}
-      <div className="space-y-4 font-mono">
+      <div className="space-y-4">
         <div className="flex flex-wrap gap-2 border-b border-border pb-2">
           <button
             onClick={() => setActiveTab('all')}
-            className={`px-4 py-2 rounded-sm text-xs font-bold uppercase transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
               activeTab === 'all'
-                ? 'bg-[#FFD400] text-black font-extrabold'
+                ? 'bg-primary text-white font-semibold'
                 : 'bg-surface-secondary border border-border text-muted-foreground hover:text-foreground'
             }`}
           >
-            All Skills ({skills.length})
+            All skills ({skills.length})
           </button>
           <button
             onClick={() => setActiveTab('critical')}
-            className={`px-4 py-2 rounded-sm text-xs font-bold uppercase transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
               activeTab === 'critical'
-                ? 'bg-rose-600 text-white font-extrabold'
-                : 'bg-rose-950/40 border border-rose-500/40 text-rose-300'
+                ? 'bg-rose-600 text-white font-semibold'
+                : 'bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/40 text-rose-700 dark:text-rose-300'
             }`}
           >
-            🔴 Critical Gaps ({criticalGaps.length})
+            Critical gaps ({criticalGaps.length})
           </button>
           <button
             onClick={() => setActiveTab('improvement')}
-            className={`px-4 py-2 rounded-sm text-xs font-bold uppercase transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
               activeTab === 'improvement'
-                ? 'bg-amber-600 text-white font-extrabold'
-                : 'bg-amber-950/40 border border-amber-500/40 text-amber-300'
+                ? 'bg-amber-600 text-white font-semibold'
+                : 'bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-300'
             }`}
           >
-            🟡 Needs Improvement ({needsImprovement.length})
+            Needs improvement ({needsImprovement.length})
           </button>
           <button
             onClick={() => setActiveTab('strong')}
-            className={`px-4 py-2 rounded-sm text-xs font-bold uppercase transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
               activeTab === 'strong'
-                ? 'bg-emerald-600 text-white font-extrabold'
-                : 'bg-emerald-950/40 border border-emerald-500/40 text-emerald-300'
+                ? 'bg-emerald-600 text-white font-semibold'
+                : 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-emerald-700 dark:text-emerald-300'
             }`}
           >
-            🟢 Strong Skills ({strongSkills.length})
+            Strong skills ({strongSkills.length})
           </button>
           <button
             onClick={() => setActiveTab('unassessed')}
-            className={`px-4 py-2 rounded-sm text-xs font-bold uppercase transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
               activeTab === 'unassessed'
-                ? 'bg-zinc-700 text-white font-extrabold'
-                : 'bg-surface-secondary border border-border text-muted-foreground'
+                ? 'bg-surface-secondary text-foreground font-semibold border border-border'
+                : 'bg-surface-secondary/50 border border-border text-muted-foreground'
             }`}
           >
-            ⚪ Unassessed ({unassessedSkills.length})
+            Unassessed ({unassessedSkills.length})
           </button>
         </div>
 
@@ -323,54 +315,54 @@ export default function SkillGapPage() {
             return (
               <Card
                 key={item.skillId}
-                className={`rounded-sm transition-all border ${
+                className={`rounded-xl transition-all border ${
                   isCritical
-                    ? 'border-rose-500/40 bg-rose-950/10'
+                    ? 'border-rose-200 dark:border-rose-800/40 bg-rose-50/30 dark:bg-rose-950/10'
                     : isStrong
-                    ? 'border-[#FFD400]/40 bg-[#FFD400]/5'
+                    ? 'border-blue-200 dark:border-blue-800/40 bg-blue-50/30 dark:bg-blue-950/10'
                     : 'border-border'
                 }`}
               >
-                <CardContent className="p-5 space-y-3 font-sans">
+                <CardContent className="p-5 space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-bold text-lg text-card-foreground uppercase">
+                        <h3 className="font-semibold text-base text-foreground">
                           {item.name}
                         </h3>
-                        <Badge variant="default" className="text-[10px] py-0 font-mono bg-surface-secondary text-muted-foreground uppercase">
+                        <Badge variant="secondary" className="text-xs">
                           {item.category}
                         </Badge>
                       </div>
-                      <span className="text-[10px] text-muted-foreground uppercase font-bold font-mono">
+                      <span className="text-xs text-muted-foreground font-medium">
                         Importance: {item.importance} • Source: {item.source}
                       </span>
                     </div>
 
                     <Badge
-                      variant="default"
-                      className="text-[10px] font-mono font-extrabold uppercase tracking-wider bg-[#FFD400]/10 text-[#FFD400] border-[#FFD400]/40"
+                      variant="blue"
+                      className="text-xs"
                     >
                       {item.status.replace('_', ' ')}
                     </Badge>
                   </div>
 
                   {/* Benchmark Progress Bar */}
-                  <div className="space-y-1 font-mono">
+                  <div className="space-y-1">
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">
-                        Current: <strong className="text-card-foreground">{item.currentProficiency}%</strong>
+                        Current: <strong className="text-foreground">{item.currentProficiency}%</strong>
                       </span>
-                      <span className="text-[#FFD400] font-bold">
+                      <span className="text-primary font-semibold">
                         Target: {item.recommendedProficiency}%
                       </span>
                     </div>
 
-                    <div className="h-2 w-full rounded-sm bg-surface-secondary overflow-hidden relative">
+                    <div className="h-2 w-full rounded-full bg-surface-secondary overflow-hidden relative">
                       <div
                         className={`h-full transition-all ${
                           isStrong
-                            ? 'bg-[#FFD400]'
+                            ? 'bg-primary'
                             : isCritical
                             ? 'bg-rose-500'
                             : 'bg-amber-500'
@@ -386,25 +378,25 @@ export default function SkillGapPage() {
                     </div>
 
                     {item.gap > 0 && (
-                      <p className="text-[10px] text-rose-500 dark:text-rose-400 font-bold pt-0.5 flex items-center justify-end gap-1 uppercase">
-                        <AlertTriangle className="h-3 w-3" />
+                      <p className="text-xs text-rose-600 dark:text-rose-400 font-medium pt-0.5 flex items-center justify-end gap-1">
+                        <AlertTriangle className="h-3.5 w-3.5" />
                         Gap: {item.gap}% points below target
                       </p>
                     )}
                   </div>
 
                   {/* Action Link */}
-                  <div className="pt-2 flex justify-between items-center border-t border-border font-mono">
-                    <span className="text-[10px] text-muted-foreground">
+                  <div className="pt-2 flex justify-between items-center border-t border-border">
+                    <span className="text-xs text-muted-foreground">
                       {item.latestAssessmentScore !== undefined
                         ? `Assessed: ${item.latestAssessmentScore}%`
                         : 'Not yet assessed'}
                     </span>
 
                     <Link href="/assessment">
-                      <Button size="sm" variant="ghost" className="text-[#FFD400] hover:text-[#FFD400] text-xs font-bold gap-1 py-1 h-auto uppercase">
-                        Take Assessment
-                        <ArrowRight className="h-3 w-3 text-[#FFD400]" />
+                      <Button size="sm" variant="ghost" className="text-primary hover:text-primary-hover text-xs gap-1 py-1 h-auto">
+                        Take assessment
+                        <ArrowRight className="h-3 w-3" />
                       </Button>
                     </Link>
                   </div>
@@ -416,21 +408,22 @@ export default function SkillGapPage() {
       </div>
 
       {/* Bottom CTA Banner */}
-      <div className="p-6 rounded-sm bg-surface-secondary border border-[#FFD400]/40 text-card-foreground flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="p-6 rounded-xl bg-surface-secondary/50 border border-border text-foreground flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
-          <h3 className="text-2xl font-extrabold uppercase text-card-foreground">Ready to close these skill gaps?</h3>
-          <p className="text-xs text-muted-foreground font-sans">
+          <h3 className="text-lg font-semibold text-foreground">Ready to close these skill gaps?</h3>
+          <p className="text-xs text-muted-foreground">
             Generate your personalized step-by-step learning roadmap tailored to your target career role.
           </p>
         </div>
         <Link href="/learning">
-          <Button variant="primary" className="font-bold text-xs px-6 py-2.5 uppercase gap-2 shrink-0">
-            Build My Learning Roadmap
-            <ArrowRight className="h-4 w-4 text-black" />
+          <Button variant="primary" className="text-xs px-6 gap-2 shrink-0">
+            Build learning roadmap
+            <ArrowRight className="h-4 w-4 text-white" />
           </Button>
         </Link>
       </div>
     </PageWrapper>
   );
 }
+
 

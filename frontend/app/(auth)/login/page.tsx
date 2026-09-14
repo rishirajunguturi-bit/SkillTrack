@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -19,8 +20,6 @@ const loginSchema = z.object({
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
-
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -47,54 +46,54 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 bg-background text-foreground relative transition-colors duration-200 selection:bg-[#FFD400] selection:text-black">
+    <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 bg-background text-foreground relative transition-colors duration-150">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
 
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2.5 mb-2 group">
-            <div className="h-10 w-10 rounded-sm bg-[#FFD400] flex items-center justify-center text-black shadow-md font-bold">
-              <Zap className="h-5 w-5 fill-black text-black" />
+          <Link href="/" className="inline-flex items-center gap-2 mb-3">
+            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-xs">
+              <Zap className="h-4 w-4 fill-white text-white" />
             </div>
-            <span className="font-bold text-3xl uppercase tracking-wider text-foreground">
-              SKILLTRACK <span className="text-[#FFD400]">AI</span>
+            <span className="font-bold text-2xl tracking-tight text-foreground">
+              SkillTrack <span className="text-primary">AI</span>
             </span>
           </Link>
-          <h2 className="mt-3 font-extrabold text-2xl uppercase tracking-wider text-foreground">
-            SIGN IN TO YOUR ACCOUNT
-          </h2>
-          <p className="text-xs text-muted-foreground mt-1 font-sans">
-            Access your student or administrator workspace.
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Welcome back
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Sign in to continue your career journey.
           </p>
         </div>
 
-        <Card className="border border-border bg-card rounded-sm shadow-2xl">
+        <Card className="border border-border bg-card rounded-xl shadow-xs">
           <CardContent className="pt-6 space-y-5">
             {/* Google OAuth Component */}
             <GoogleAuthButton />
 
             <div className="relative flex items-center justify-center">
               <div className="w-full border-t border-border" />
-              <span className="bg-card px-3 text-[10px] text-muted-foreground font-mono font-bold uppercase relative">
-                OR CONTINUE WITH EMAIL
+              <span className="bg-card px-3 text-xs text-muted-foreground relative">
+                or continue with email
               </span>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <Input
-                label="Email Address"
+                label="Email address"
                 type="email"
                 placeholder="sarthak@college.edu"
                 {...register('email')}
                 error={errors.email?.message}
               />
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-mono font-bold uppercase text-muted-foreground">Password</span>
-                  <Link href="/forgot-password" className="text-xs font-mono font-bold text-[#FFD400] hover:underline">
+                  <label className="block text-sm font-medium text-foreground">Password</label>
+                  <Link href="/forgot-password" className="text-xs font-medium text-primary hover:underline">
                     Forgot password?
                   </Link>
                 </div>
@@ -106,18 +105,18 @@ export default function LoginPage() {
                 />
               </div>
 
-              <Button type="submit" size="lg" variant="primary" className="w-full gap-2 mt-2 font-bold uppercase" isLoading={isLoading}>
-                SIGN IN
-                <ArrowRight className="h-4 w-4 text-black" />
+              <Button type="submit" size="lg" variant="primary" className="w-full gap-2 mt-2" isLoading={isLoading}>
+                Sign in
+                <ArrowRight className="h-4 w-4 text-white" />
               </Button>
             </form>
           </CardContent>
 
-          <CardFooter className="flex justify-center border-t border-border py-4 bg-surface-secondary rounded-b-sm">
-            <p className="text-xs text-muted-foreground font-sans">
-              Don't have an account yet?{' '}
-              <Link href="/register" className="font-bold text-[#FFD400] hover:underline">
-                Create an account
+          <CardFooter className="flex justify-center border-t border-border py-4 bg-surface-secondary/50 rounded-b-xl">
+            <p className="text-xs text-muted-foreground">
+              Don't have an account?{' '}
+              <Link href="/register" className="font-medium text-primary hover:underline">
+                Create one
               </Link>
             </p>
           </CardFooter>
@@ -126,4 +125,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
 

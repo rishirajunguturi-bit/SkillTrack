@@ -40,7 +40,14 @@ import {
   createAssessment,
   updateAssessment,
   toggleAssessmentStatus,
+  deleteAssessment,
+  duplicateAssessment,
   getAssessmentQuestions,
+  createQuestion,
+  updateQuestion,
+  deleteQuestion,
+  duplicateQuestion,
+  reorderQuestions,
   generateAiQuestionsForSkill,
 } from '../controllers/assessment.controller';
 import {
@@ -131,8 +138,17 @@ router.delete('/career-roles/:id/skills/:skillId', removeRoleSkill);
 router.get('/assessments', getAdminAssessments);
 router.post('/assessments', createAssessment);
 router.put('/assessments/:id', updateAssessment);
-router.delete('/assessments/:id', toggleAssessmentStatus);
+router.put('/assessments/:id/status', toggleAssessmentStatus);
+router.delete('/assessments/:id', deleteAssessment);
+router.post('/assessments/:id/duplicate', duplicateAssessment);
 router.get('/assessments/:id/questions', getAssessmentQuestions);
+router.post('/assessments/:id/questions', createQuestion);
+router.put('/assessments/:id/questions/reorder', reorderQuestions);
 router.post('/assessments/generate-questions/:skillId', generateAiQuestionsForSkill);
+
+// Question Level Routes
+router.put('/questions/:questionId', updateQuestion);
+router.delete('/questions/:questionId', deleteQuestion);
+router.post('/questions/:questionId/duplicate', duplicateQuestion);
 
 export default router;

@@ -287,4 +287,78 @@ export const adminService = {
     );
     return res.data.data!;
   },
+
+  async duplicateAssessment(id: string): Promise<Assessment> {
+    const res = await apiClient.post<ApiResponse<{ assessment: Assessment }>>(`/admin/assessments/${id}/duplicate`);
+    return res.data.data!.assessment;
+  },
+
+  async deleteAssessment(id: string): Promise<{ message: string; archived?: boolean }> {
+    const res = await apiClient.delete<ApiResponse<{ message: string; archived?: boolean }>>(`/admin/assessments/${id}/delete`);
+    return res.data.data!;
+  },
+
+  async createQuestion(assessmentId: string, data: any): Promise<QuestionReviewItem> {
+    const res = await apiClient.post<ApiResponse<{ question: QuestionReviewItem }>>(`/admin/assessments/${assessmentId}/questions`, data);
+    return res.data.data!.question;
+  },
+
+  async updateQuestion(questionId: string, data: any): Promise<QuestionReviewItem> {
+    const res = await apiClient.put<ApiResponse<{ question: QuestionReviewItem }>>(`/admin/questions/${questionId}`, data);
+    return res.data.data!.question;
+  },
+
+  async deleteQuestion(questionId: string): Promise<void> {
+    await apiClient.delete(`/admin/questions/${questionId}`);
+  },
+
+  async duplicateQuestion(questionId: string): Promise<QuestionReviewItem> {
+    const res = await apiClient.post<ApiResponse<{ question: QuestionReviewItem }>>(`/admin/questions/${questionId}/duplicate`);
+    return res.data.data!.question;
+  },
+
+  async reorderQuestions(assessmentId: string, questionIds: string[]): Promise<void> {
+    await apiClient.post(`/admin/assessments/${assessmentId}/reorder-questions`, { questionIds });
+  },
+
+  // Training Programs & Cohorts
+  async getPrograms(): Promise<any[]> {
+    const res = await apiClient.get<ApiResponse<{ programs: any[] }>>('/programs');
+    return res.data.data?.programs || [];
+  },
+
+  async createProgram(data: any): Promise<any> {
+    const res = await apiClient.post<ApiResponse<{ program: any }>>('/programs', data);
+    return res.data.data!.program;
+  },
+
+  async updateProgram(id: string, data: any): Promise<any> {
+    const res = await apiClient.put<ApiResponse<{ program: any }>>(`/programs/${id}`, data);
+    return res.data.data!.program;
+  },
+
+  async toggleProgramStatus(id: string): Promise<any> {
+    const res = await apiClient.delete<ApiResponse<{ program: any }>>(`/programs/${id}`);
+    return res.data.data!.program;
+  },
+
+  async getCohorts(): Promise<any[]> {
+    const res = await apiClient.get<ApiResponse<{ cohorts: any[] }>>('/cohorts');
+    return res.data.data?.cohorts || [];
+  },
+
+  async createCohort(data: any): Promise<any> {
+    const res = await apiClient.post<ApiResponse<{ cohort: any }>>('/cohorts', data);
+    return res.data.data!.cohort;
+  },
+
+  async updateCohort(id: string, data: any): Promise<any> {
+    const res = await apiClient.put<ApiResponse<{ cohort: any }>>(`/cohorts/${id}`, data);
+    return res.data.data!.cohort;
+  },
+
+  async toggleCohortStatus(id: string): Promise<any> {
+    const res = await apiClient.delete<ApiResponse<{ cohort: any }>>(`/cohorts/${id}`);
+    return res.data.data!.cohort;
+  },
 };

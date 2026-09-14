@@ -14,6 +14,12 @@ export interface ITopicPerformance {
   percentage: number;
 }
 
+export interface IQuestionSnapshot {
+  questionId: mongoose.Types.ObjectId;
+  shuffledOptions: string[];
+  shuffledCorrectIndex: number;
+}
+
 export interface IAssessmentAttempt extends Document {
   userId: mongoose.Types.ObjectId;
   assessmentId: mongoose.Types.ObjectId;
@@ -29,6 +35,7 @@ export interface IAssessmentAttempt extends Document {
   proficiency: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   status: 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED';
   answers: IUserAnswer[];
+  questionSnapshots?: IQuestionSnapshot[];
   topicPerformance: ITopicPerformance[];
   createdAt: Date;
   updatedAt: Date;
@@ -64,6 +71,13 @@ const assessmentAttemptSchema = new Schema<IAssessmentAttempt>(
         selectedOption: { type: Number, required: true },
         isCorrect: { type: Boolean },
         timeSpent: { type: Number, default: 0 },
+      },
+    ],
+    questionSnapshots: [
+      {
+        questionId: { type: Schema.Types.ObjectId, ref: 'AssessmentQuestion', required: true },
+        shuffledOptions: [{ type: String }],
+        shuffledCorrectIndex: { type: Number, required: true },
       },
     ],
     topicPerformance: [

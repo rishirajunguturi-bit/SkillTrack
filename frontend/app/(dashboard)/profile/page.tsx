@@ -41,12 +41,15 @@ import {
   DialogFooter,
 } from '@/components/ui/Dialog';
 
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import { getGraduationYearOptions } from '@/lib/yearUtils';
+
 const editProfileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   college: z.string().min(2, 'College selection is required'),
   degree: z.string().min(1, 'Degree is required'),
   branch: z.string().min(1, 'Branch is required'),
-  graduationYear: z.coerce.number().min(2024).max(2032),
+  graduationYear: z.coerce.number().min(1990).max(2100),
   targetRole: z.string().min(1, 'Target role is required'),
   targetCareerRoleId: z.string().optional(),
   targetDomain: z.string().min(1, 'Target domain is required'),
@@ -417,13 +420,7 @@ export default function ProfilePage() {
 
               <Select
                 label="Graduation Year"
-                options={[
-                  { label: '2024', value: 2024 },
-                  { label: '2025', value: 2025 },
-                  { label: '2026', value: 2026 },
-                  { label: '2027', value: 2027 },
-                  { label: '2028', value: 2028 },
-                ]}
+                options={getGraduationYearOptions()}
                 {...register('graduationYear')}
                 error={errors.graduationYear?.message}
               />
@@ -464,10 +461,10 @@ export default function ProfilePage() {
             />
 
             <DialogFooter className="mt-6 gap-2">
-              <Button type="button" variant="secondary" onClick={() => setIsEditOpen(false)} className="text-xs font-mono uppercase">
+              <Button type="button" variant="secondary" onClick={() => setIsEditOpen(false)} className="text-xs font-semibold uppercase">
                 Cancel
               </Button>
-              <Button type="submit" isLoading={updateProfileMutation.isPending} variant="primary" className="font-bold text-xs uppercase">
+              <Button type="submit" isLoading={updateProfileMutation.isPending} variant="primary" className="font-bold text-xs uppercase bg-[#2563EB] hover:bg-[#1D4ED8] text-white">
                 Save Changes
               </Button>
             </DialogFooter>
@@ -477,53 +474,63 @@ export default function ProfilePage() {
 
       {/* Add / Update Technical Skill Modal */}
       <Dialog open={isAddSkillOpen} onOpenChange={setIsAddSkillOpen}>
-        <DialogContent className="max-w-md bg-card border-border text-card-foreground rounded-sm">
+        <DialogContent className="max-w-md bg-white border border-[#D9E2EC] text-[#172033] rounded-xl shadow-lg">
           <DialogHeader>
-            <DialogTitle className="text-xl font-extrabold uppercase text-card-foreground">Add / Update Technical Skill</DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground font-mono">
-              Select a skill from the engineering catalog and set your current proficiency.
+            <DialogTitle className="text-lg font-bold text-[#172033]">Add / Update Technical Skill</DialogTitle>
+            <DialogDescription className="text-xs text-[#526071]">
+              Select a skill from the engineering catalog and set your custom proficiency rating (0–100%).
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-5 py-2 font-sans">
-            {/* Custom Category-Grouped Premium Skill Selector Combobox */}
+          <div className="space-y-5 py-2">
+            {/* Custom Category-Grouped Skill Selector */}
             <SkillSelect
               label="Select Technical Skill"
               skills={catalogSkills}
               value={selectedSkillId}
-              onChange={(skillId) => setSelectedSkillId(skillId)}
+              onChange={(skillId) => {
+                setSelectedSkillId(skillId);
+                // Check if skill already exists in profile data and pre-populate proficiency
+                const existingSkill = profileData?.skills?.find((s) => {
+                  const sId = typeof s.skillId === 'object' ? (s.skillId as any)?._id : s.skillId;
+                  return sId === skillId;
+                });
+                if (existingSkill) {
+                  setSkillProficiency(existingSkill.proficiency);
+                }
+              }}
               isLoading={isLoadingSkills}
               isError={isSkillsError}
               onRetry={refetchSkills}
             />
 
             {selectedSkillObj && (
-              <div className="p-3.5 rounded-sm bg-surface-secondary border border-border text-xs space-y-1 font-mono">
-                <div className="font-bold text-card-foreground flex items-center justify-between uppercase">
+              <div className="p-3.5 rounded-lg bg-[#F7F9FC] border border-[#D9E2EC] text-xs space-y-1">
+                <div className="font-bold text-[#172033] flex items-center justify-between">
                   <span>{selectedSkillObj.name}</span>
-                  <Badge variant="default" className="text-[10px] bg-[#FFD400]/10 text-[#FFD400] border-[#FFD400]/40">
+                  <Badge variant="blue" className="text-[10px]">
                     {selectedSkillObj.category}
                   </Badge>
                 </div>
                 {selectedSkillObj.description && (
-                  <p className="text-muted-foreground text-[11px] leading-relaxed pt-1 font-sans">
+                  <p className="text-[#526071] text-[11px] leading-relaxed pt-1">
                     {selectedSkillObj.description}
                   </p>
                 )}
               </div>
             )}
 
-            {/* Proficiency Slider & Rating Display */}
-            <div className="space-y-3 font-mono">
+            {/* Proficiency Slider & Rating Display (0–100%) */}
+            <div className="space-y-3 p-4 rounded-xl bg-[#F7F9FC] border border-[#D9E2EC]">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold uppercase tracking-wider text-muted-foreground">
-                  Proficiency Score
+                <span className="font-semibold text-[#172033]">
+                  Proficiency Rating
                 </span>
                 <div className="flex items-center gap-2">
-                  <Badge variant="default" className="text-[10px] bg-[#FFD400]/10 text-[#FFD400] border-[#FFD400]/40 uppercase">
+                  <Badge variant="blue" className="text-[10px]">
                     {getProficiencyLevel(skillProficiency)}
                   </Badge>
-                  <span className="font-black text-lg text-[#FFD400]">
+                  <span className="font-bold text-sm text-[#2563EB] bg-[#E8F1FB] px-2.5 py-0.5 rounded-md border border-[#D9E2EC]">
                     {skillProficiency}%
                   </span>
                 </div>
@@ -531,16 +538,16 @@ export default function ProfilePage() {
 
               <input
                 type="range"
-                min="10"
+                min="0"
                 max="100"
                 step="5"
                 value={skillProficiency}
                 onChange={(e) => setSkillProficiency(parseInt(e.target.value))}
-                className="w-full h-2 bg-surface-secondary rounded-sm appearance-none cursor-pointer accent-[#FFD400] focus:outline-none"
+                className="w-full h-2 bg-[#E8EDF3] rounded-lg appearance-none cursor-pointer accent-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
               />
 
-              <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
-                <span>Beginner (10%)</span>
+              <div className="flex justify-between text-[11px] text-[#718096] font-medium">
+                <span>Beginner (0%)</span>
                 <span>Intermediate (50%)</span>
                 <span>Advanced (100%)</span>
               </div>
@@ -548,7 +555,7 @@ export default function ProfilePage() {
           </div>
 
           <DialogFooter className="mt-4 gap-2">
-            <Button type="button" variant="secondary" onClick={() => setIsAddSkillOpen(false)} className="text-xs font-mono uppercase">
+            <Button type="button" variant="secondary" onClick={() => setIsAddSkillOpen(false)} className="text-xs font-semibold">
               Cancel
             </Button>
             <Button
@@ -556,7 +563,7 @@ export default function ProfilePage() {
               isLoading={addSkillMutation.isPending}
               disabled={!selectedSkillId || isLoadingSkills}
               variant="primary"
-              className="font-bold text-xs uppercase"
+              className="font-bold text-xs bg-[#2563EB] hover:bg-[#1D4ED8] text-white"
             >
               {addSkillMutation.isPending ? 'Saving skill...' : 'Save Skill'}
             </Button>

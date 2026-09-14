@@ -11,13 +11,12 @@ import {
   ArrowRight,
   CheckCircle2,
   Brain,
-  Building,
+  X,
 } from 'lucide-react';
 import { useAuth } from '@/providers/AuthProvider';
 import { userService } from '@/services/user.service';
 import { skillService } from '@/services/skill.service';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { CollegeSelect } from '@/components/ui/CollegeSelect';
 import { CareerRoleSelect } from '@/components/ui/CareerRoleSelect';
@@ -26,6 +25,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Progress } from '@/components/ui/Progress';
 import { Badge } from '@/components/ui/Badge';
 import { PageWrapper } from '@/components/ui/PageWrapper';
+import { getGraduationYearOptions } from '@/lib/yearUtils';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -114,6 +114,10 @@ export default function OnboardingPage() {
     setCurrentSkillId('');
   };
 
+  const handleRemoveSkill = (skillId: string) => {
+    setSelectedSkills(selectedSkills.filter((s) => s.skillId !== skillId));
+  };
+
   const handleNextStep = () => {
     if (step === 1) {
       if (!basicInfo.college) {
@@ -125,32 +129,32 @@ export default function OnboardingPage() {
   };
 
   return (
-    <PageWrapper className="min-h-screen flex flex-col justify-center items-center py-10 px-4 bg-zinc-50 dark:bg-zinc-950">
+    <PageWrapper className="min-h-screen flex flex-col justify-center items-center py-10 px-4">
       <div className="w-full max-w-2xl space-y-6">
         {/* Onboarding Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 text-xs font-bold border border-indigo-200/50 dark:border-indigo-800/50">
-            <Sparkles className="h-3.5 w-3.5" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#ffad8a]/15 text-[#ffad8a] text-xs font-semibold border border-[#ffad8a]/30">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
             <span>Step {step} of 4 • Student Onboarding</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
             Personalize Your SkillTrack AI Pathway
           </h1>
           <Progress value={(step / 4) * 100} className="h-2 w-full max-w-md mx-auto mt-3" />
         </div>
 
-        <Card className="shadow-xl border-zinc-200/80 dark:border-zinc-800">
-          <CardContent className="p-6 sm:p-8 space-y-6">
+        <Card className="p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-xl backdrop-blur-md">
+          <CardContent className="p-0 space-y-6">
             {/* STEP 1: ACADEMIC BACKGROUND */}
             {step === 1 && (
               <div className="space-y-5 animate-in fade-in duration-200">
-                <div className="flex items-center gap-3 pb-3 border-b border-zinc-100 dark:border-zinc-800">
-                  <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold">
-                    <GraduationCap className="h-5 w-5" />
+                <div className="flex items-center gap-3 pb-4 border-b border-border">
+                  <div className="h-10 w-10 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold shrink-0">
+                    <GraduationCap className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h2 className="font-bold text-lg text-zinc-900 dark:text-zinc-100">Academic Background</h2>
-                    <p className="text-xs text-zinc-500">Confirm your engineering institution and degree.</p>
+                    <h2 className="font-bold text-lg text-foreground">Academic Background</h2>
+                    <p className="text-xs text-muted-foreground">Confirm your engineering institution and degree.</p>
                   </div>
                 </div>
 
@@ -179,13 +183,7 @@ export default function OnboardingPage() {
 
                     <Select
                       label="Graduation Year"
-                      options={[
-                        { label: '2024', value: 2024 },
-                        { label: '2025', value: 2025 },
-                        { label: '2026', value: 2026 },
-                        { label: '2027', value: 2027 },
-                        { label: '2028', value: 2028 },
-                      ]}
+                      options={getGraduationYearOptions()}
                       value={basicInfo.graduationYear}
                       onChange={(e) => setBasicInfo({ ...basicInfo, graduationYear: parseInt(e.target.value) })}
                     />
@@ -211,13 +209,13 @@ export default function OnboardingPage() {
             {/* STEP 2: CAREER GOALS */}
             {step === 2 && (
               <div className="space-y-5 animate-in fade-in duration-200">
-                <div className="flex items-center gap-3 pb-3 border-b border-zinc-100 dark:border-zinc-800">
-                  <div className="h-10 w-10 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold">
-                    <Target className="h-5 w-5" />
+                <div className="flex items-center gap-3 pb-4 border-b border-border">
+                  <div className="h-10 w-10 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold shrink-0">
+                    <Target className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h2 className="font-bold text-lg text-zinc-900 dark:text-zinc-100">Placement Target & Role</h2>
-                    <p className="text-xs text-zinc-500">Define your dream career path for AI gap benchmarking.</p>
+                    <h2 className="font-bold text-lg text-foreground">Placement Target & Role</h2>
+                    <p className="text-xs text-muted-foreground">Define your dream career path for AI gap benchmarking.</p>
                   </div>
                 </div>
 
@@ -265,55 +263,88 @@ export default function OnboardingPage() {
             {/* STEP 3: INITIAL SKILL SELECTION */}
             {step === 3 && (
               <div className="space-y-5 animate-in fade-in duration-200">
-                <div className="flex items-center gap-3 pb-3 border-b border-zinc-100 dark:border-zinc-800">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold">
-                    <Brain className="h-5 w-5" />
+                <div className="flex items-center gap-3 pb-4 border-b border-border">
+                  <div className="h-10 w-10 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold shrink-0">
+                    <Brain className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h2 className="font-bold text-lg text-zinc-900 dark:text-zinc-100">Add Technical Skills</h2>
-                    <p className="text-xs text-zinc-500">Pick your core skills and set proficiency ratings.</p>
+                    <h2 className="font-bold text-lg text-foreground">Add Technical Skills</h2>
+                    <p className="text-xs text-muted-foreground">Pick your core skills and set custom proficiency ratings (0–100%).</p>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="space-y-3">
-                    <SkillSelect
-                      label="Select Skill from Catalog"
-                      skills={catalogSkills}
-                      value={currentSkillId}
-                      onChange={(skillId) => setCurrentSkillId(skillId)}
-                      isLoading={isLoadingSkills}
-                      isError={isSkillsError}
-                      onRetry={refetchSkills}
+                <div className="space-y-5 p-4 rounded-xl bg-surface-secondary/50 border border-border">
+                  <SkillSelect
+                    label="Select Skill from Catalog"
+                    skills={catalogSkills}
+                    value={currentSkillId}
+                    onChange={(skillId) => setCurrentSkillId(skillId)}
+                    isLoading={isLoadingSkills}
+                    isError={isSkillsError}
+                    onRetry={refetchSkills}
+                  />
+
+                  {/* Interactive Proficiency Rating Slider (0–100%) */}
+                  <div className="space-y-2.5 pt-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <label className="font-semibold text-foreground">
+                        Proficiency Rating
+                      </label>
+                      <span className="font-bold text-primary text-xs bg-primary/20 px-2.5 py-0.5 rounded-md border border-primary/30">
+                        {currentProficiency}%
+                      </span>
+                    </div>
+
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      step={5}
+                      value={currentProficiency}
+                      onChange={(e) => setCurrentProficiency(Number(e.target.value))}
+                      className="w-full h-2 bg-surface rounded-lg appearance-none cursor-pointer accent-[#ffad8a] focus:outline-none focus:ring-2 focus:ring-[#ffad8a]/20"
                     />
 
-                    <div className="flex items-center justify-between pt-1">
-                      <span className="text-xs text-zinc-500 font-medium">
-                        Proficiency Rating: <strong className="text-indigo-600 dark:text-indigo-400">{currentProficiency}%</strong>
-                      </span>
-                      <Button
-                        type="button"
-                        onClick={handleAddSkill}
-                        disabled={!currentSkillId}
-                        size="sm"
-                        className="gap-1 text-xs"
-                      >
-                        Add Skill to List
-                      </Button>
+                    <div className="flex justify-between text-[11px] text-muted-foreground font-medium">
+                      <span>Beginner (0%)</span>
+                      <span>Intermediate (50%)</span>
+                      <span>Advanced (100%)</span>
                     </div>
                   </div>
 
-                  {/* Selected Skills Badges */}
-                  <div className="flex flex-wrap gap-2 pt-2">
+                  <Button
+                    type="button"
+                    onClick={handleAddSkill}
+                    disabled={!currentSkillId}
+                    size="sm"
+                    variant="primary"
+                    className="w-full gap-1.5 text-xs"
+                  >
+                    Add Skill to List
+                  </Button>
+                </div>
+
+                {/* Selected Skills Badges List */}
+                <div className="space-y-2 pt-2">
+                  <span className="text-xs font-semibold text-muted-foreground">Added Skills ({selectedSkills.length}):</span>
+                  <div className="flex flex-wrap gap-2">
                     {selectedSkills.length === 0 ? (
-                      <p className="text-xs text-zinc-400 italic">No skills added yet. Add at least 1 skill to proceed.</p>
+                      <p className="text-xs text-muted-foreground italic">No skills added yet. Add at least 1 skill to proceed.</p>
                     ) : (
                       selectedSkills.map((s) => (
                         <span
                           key={s.skillId}
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-800 text-xs font-semibold"
+                          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-secondary text-foreground border border-border text-xs font-semibold"
                         >
-                          {s.name} ({s.proficiency}%)
+                          <span>{s.name}</span>
+                          <span className="text-primary font-bold">({s.proficiency}%)</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSkill(s.skillId)}
+                            className="text-muted-foreground hover:text-rose-400 transition-colors"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
                         </span>
                       ))
                     )}
@@ -325,55 +356,68 @@ export default function OnboardingPage() {
             {/* STEP 4: REVIEW & CONFIRM */}
             {step === 4 && (
               <div className="space-y-5 animate-in fade-in duration-200 text-xs">
-                <div className="flex items-center gap-3 pb-3 border-b border-zinc-100 dark:border-zinc-800">
-                  <div className="h-10 w-10 rounded-xl bg-amber-600 flex items-center justify-center text-white font-bold">
-                    <CheckCircle2 className="h-5 w-5" />
+                <div className="flex items-center gap-3 pb-4 border-b border-border">
+                  <div className="h-10 w-10 rounded-xl bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold shrink-0">
+                    <CheckCircle2 className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h2 className="font-bold text-lg text-zinc-900 dark:text-zinc-100">Review & Launch Pathway</h2>
-                    <p className="text-xs text-zinc-500">Confirm your setup to initialize AI gap analysis.</p>
+                    <h2 className="font-bold text-lg text-foreground">Review & Launch Pathway</h2>
+                    <p className="text-xs text-muted-foreground">Confirm your setup to initialize AI gap analysis.</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-1">
-                    <span className="font-bold text-zinc-900 dark:text-zinc-100">Institution</span>
-                    <p className="text-zinc-500">{basicInfo.college}</p>
-                    <p className="text-zinc-500">{basicInfo.degree} in {basicInfo.branch} ({basicInfo.graduationYear})</p>
+                  <div className="p-4 rounded-xl bg-surface-secondary/50 border border-border space-y-1">
+                    <span className="font-bold text-foreground">Institution</span>
+                    <p className="text-muted-foreground">{basicInfo.college}</p>
+                    <p className="text-muted-foreground">{basicInfo.degree} in {basicInfo.branch} ({basicInfo.graduationYear})</p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-1">
-                    <span className="font-bold text-zinc-900 dark:text-zinc-100">Career Target</span>
-                    <p className="text-zinc-500">{careerGoals.targetRole}</p>
-                    <p className="text-zinc-500">{careerGoals.targetDomain} • {careerGoals.experienceLevel}</p>
+                  <div className="p-4 rounded-xl bg-surface-secondary/50 border border-border space-y-1">
+                    <span className="font-bold text-foreground">Career Target</span>
+                    <p className="text-muted-foreground">{careerGoals.targetRole}</p>
+                    <p className="text-muted-foreground">{careerGoals.targetDomain} • {careerGoals.experienceLevel}</p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-surface-secondary/50 border border-border space-y-2">
+                  <span className="font-bold text-foreground">Selected Technical Skills ({selectedSkills.length})</span>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedSkills.map((s) => (
+                      <Badge key={s.skillId} variant="warning" className="text-xs bg-[#ffad8a]/20 text-[#ffad8a] border-[#ffad8a]/30">
+                        {s.name}: {s.proficiency}%
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               </div>
             )}
 
             {/* Navigation Controls */}
-            <div className="flex justify-between items-center pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <div className="flex justify-between items-center pt-4 border-t border-border">
               <Button
-                variant="outline"
+                variant="secondary"
                 onClick={() => setStep((prev) => Math.max(1, prev - 1))}
                 disabled={step === 1}
+                className="text-xs"
               >
                 Back
               </Button>
 
               {step < 4 ? (
-                <Button onClick={handleNextStep} className="gap-2">
+                <Button onClick={handleNextStep} variant="primary" className="gap-2 text-xs">
                   Continue
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 text-white" />
                 </Button>
               ) : (
                 <Button
                   onClick={() => completeOnboardingMutation.mutate()}
                   isLoading={completeOnboardingMutation.isPending}
-                  className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                  variant="primary"
+                  className="gap-2 text-xs"
                 >
                   Launch Dashboard
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 text-white" />
                 </Button>
               )}
             </div>

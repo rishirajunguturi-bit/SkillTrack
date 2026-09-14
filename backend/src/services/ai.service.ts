@@ -19,7 +19,7 @@ export class AIService {
   public async generateSkillRecommendations(targetRole: string, currentSkills: string[]): Promise<string[]> {
     if (this.genAI) {
       try {
-        const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = this.genAI.getGenerativeModel({ model: env.GEMINI_MODEL || 'gemini-2.5-flash' });
         const prompt = `Suggest top 5 essential technical skills for an engineering student targeting the role of "${targetRole}". Current skills are: ${currentSkills.join(', ')}. Return ONLY a raw JSON array of strings.`;
         const result = await model.generateContent(prompt);
         const text = result.response.text() || '[]';

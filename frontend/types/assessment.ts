@@ -3,7 +3,7 @@ import { Skill } from './skill';
 export interface Assessment {
   _id: string;
   title: string;
-  skillId: Skill;
+  skillId: Skill | string;
   description?: string;
   difficulty: 'EASY' | 'MEDIUM' | 'HARD' | 'MIXED';
   questionCount: number;
@@ -58,14 +58,19 @@ export interface SubmitAssessmentResponse {
 }
 
 export interface QuestionReviewItem {
-  questionId: string;
+  _id?: string;
+  questionId?: string;
+  assessmentId?: string;
+  skillId?: string;
   topic: string;
   question: string;
   options: string[];
   correctAnswer: number;
-  selectedOption: number;
-  isCorrect: boolean;
+  selectedOption?: number;
+  isCorrect?: boolean;
   explanation: string;
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
+  order?: number;
 }
 
 export interface AttemptResultResponse {

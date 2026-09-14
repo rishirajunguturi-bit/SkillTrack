@@ -105,43 +105,43 @@ export function EmploymentDocumentsSection({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'VERIFIED':
-        return <Badge variant="success" className="gap-1 text-[10px] font-mono font-bold uppercase"><CheckCircle2 className="h-3 w-3" /> VERIFIED</Badge>;
+        return <Badge variant="success" className="gap-1 text-xs"><CheckCircle2 className="h-3 w-3" /> Verified</Badge>;
       case 'REJECTED':
-        return <Badge variant="rose" className="gap-1 text-[10px] font-mono font-bold uppercase"><AlertCircle className="h-3 w-3" /> REJECTED</Badge>;
+        return <Badge variant="error" className="gap-1 text-xs"><AlertCircle className="h-3 w-3" /> Rejected</Badge>;
       case 'UNDER_REVIEW':
       case 'UPLOADED':
       default:
-        return <Badge variant="default" className="gap-1 text-[10px] font-mono font-bold uppercase bg-[#FFD400]/10 text-[#FFD400] border-[#FFD400]/40"><Clock className="h-3 w-3" /> UNDER REVIEW</Badge>;
+        return <Badge variant="blue" className="gap-1 text-xs"><Clock className="h-3 w-3" /> Under review</Badge>;
     }
   };
 
   return (
     <Card className="p-6">
       <CardHeader className="p-0 pb-4 border-b border-border mb-4">
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
-          <FileText className="h-5 w-5 text-[#FFD400]" />
-          3. EMPLOYMENT DOCUMENTS & EVIDENCE
+        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <FileText className="h-5 w-5 text-primary" />
+          Employment documents & evidence
         </CardTitle>
-        <CardDescription className="text-xs text-muted-foreground font-sans">
-          Upload verified employment proof (Offer Letter, ID Card, Joining Letter) directly from your device for trainer verification.
+        <CardDescription>
+          Upload verified employment proof (Offer Letter, ID Card, Joining Letter) directly for verification.
         </CardDescription>
       </CardHeader>
 
       <CardContent className="p-0 space-y-6">
         {/* Real File Upload Form */}
-        <form onSubmit={handleSubmit} className="p-5 rounded-sm bg-surface-secondary border border-border space-y-4 text-xs font-sans">
-          <div className="font-bold text-sm uppercase tracking-wider text-[#FFD400] flex items-center gap-1.5">
-            <Upload className="h-4 w-4 text-[#FFD400]" />
-            UPLOAD NEW EMPLOYMENT DOCUMENT
+        <form onSubmit={handleSubmit} className="p-5 rounded-xl bg-surface-secondary/50 border border-border space-y-4 text-xs font-sans">
+          <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+            <Upload className="h-4 w-4 text-primary" />
+            Upload new document
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-mono font-bold text-muted-foreground uppercase block mb-1">Document Type *</label>
+              <label className="font-medium text-foreground text-xs block mb-1">Document type *</label>
               <select
                 value={documentType}
                 onChange={(e) => setDocumentType(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-sm border border-input bg-background text-foreground font-mono text-xs focus:border-[#FFD400] focus:outline-none"
+                className="w-full px-3 py-2 rounded-md border border-border bg-surface text-foreground text-xs focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none"
               >
                 <option value="Offer Letter">Offer Letter</option>
                 <option value="Internship Offer Letter">Internship Offer Letter</option>
@@ -153,20 +153,20 @@ export function EmploymentDocumentsSection({
             </div>
 
             <div>
-              <label className="font-mono font-bold text-muted-foreground uppercase block mb-1">Document Name / Title</label>
+              <label className="font-medium text-foreground text-xs block mb-1">Document title</label>
               <input
                 type="text"
                 placeholder="e.g. Offer_Letter_ABC_Technologies.pdf"
                 value={fileName}
                 onChange={(e) => setFileName(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-sm border border-input bg-background text-foreground font-mono text-xs focus:border-[#FFD400] focus:outline-none"
+                className="w-full px-3 py-2 rounded-md border border-border bg-surface text-foreground text-xs focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none"
               />
             </div>
           </div>
 
           {/* Drag & Drop File Upload Area */}
           <div>
-            <label className="font-mono font-bold text-muted-foreground uppercase block mb-1">Upload Employment Document *</label>
+            <label className="font-medium text-foreground text-xs block mb-1">File selection (PDF or PNG) *</label>
 
             <input
               type="file"
@@ -182,40 +182,40 @@ export function EmploymentDocumentsSection({
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className={`p-6 rounded-sm border-2 border-dashed text-center cursor-pointer transition-all ${
+                className={`p-6 rounded-xl border-2 border-dashed text-center cursor-pointer transition-all ${
                   isDragging
-                    ? 'border-[#FFD400] bg-[#FFD400]/10'
-                    : 'border-border bg-background hover:border-[#FFD400]/50'
+                    ? 'border-primary bg-blue-50/50 dark:bg-blue-950/20'
+                    : 'border-border bg-surface hover:border-primary/50'
                 }`}
               >
                 <div className="flex flex-col items-center space-y-2">
-                  <div className="p-3 rounded-sm bg-surface-secondary text-[#FFD400]">
-                    <Upload className="h-6 w-6" />
+                  <div className="p-3 rounded-lg bg-surface-secondary text-primary">
+                    <Upload className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-card-foreground text-sm uppercase">
-                      DRAG & DROP YOUR FILE HERE OR <span className="text-[#FFD400] underline">BROWSE</span>
+                    <p className="font-medium text-foreground text-sm">
+                      Drag & drop your file here or <span className="text-primary underline">browse</span>
                     </p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">
-                      PDF OR PNG • MAXIMUM 10 MB
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      PDF or PNG • Maximum size 10 MB
                     </p>
                   </div>
-                  <Button type="button" size="sm" variant="secondary" className="text-xs font-mono font-bold uppercase pointer-events-none mt-1">
-                    Choose File
+                  <Button type="button" size="sm" variant="secondary" className="text-xs pointer-events-none mt-1">
+                    Choose file
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className="p-4 rounded-sm bg-[#FFD400]/10 border border-[#FFD400]/40 flex items-center justify-between gap-4">
+              <div className="p-4 rounded-xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/40 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-sm bg-[#FFD400] text-black font-bold">
+                  <div className="p-2.5 rounded-lg bg-primary text-white font-medium">
                     <FileCheck className="h-5 w-5" />
                   </div>
                   <div>
-                    <span className="font-bold text-card-foreground text-sm block truncate max-w-sm">
+                    <span className="font-semibold text-foreground text-sm block truncate max-w-sm">
                       {selectedFile.name}
                     </span>
-                    <span className="text-[10px] text-[#FFD400] font-mono">
+                    <span className="text-xs text-muted-foreground">
                       {selectedFile.type || 'Document'} • {formatFileSize(selectedFile.size)}
                     </span>
                   </div>
@@ -243,20 +243,20 @@ export function EmploymentDocumentsSection({
             variant="primary"
             isLoading={isUploading}
             disabled={!selectedFile || isUploading}
-            className="font-bold text-xs uppercase tracking-wider gap-1.5 w-full sm:w-auto"
+            className="gap-1.5 w-full sm:w-auto"
           >
-            <Upload className="h-4 w-4 text-black" /> UPLOAD DOCUMENT PROOF
+            <Upload className="h-4 w-4" /> Upload document proof
           </Button>
         </form>
 
         {/* Uploaded Documents List */}
         <div className="space-y-3">
-          <h4 className="font-mono font-bold text-xs text-muted-foreground uppercase">
-            Uploaded Documents ({documents.length})
+          <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider">
+            Uploaded documents ({documents.length})
           </h4>
 
           {documents.length === 0 ? (
-            <div className="p-6 text-center text-muted-foreground bg-surface-secondary rounded-sm border border-dashed border-border text-xs font-mono uppercase">
+            <div className="p-6 text-center text-muted-foreground bg-surface-secondary/50 rounded-xl border border-dashed border-border text-xs">
               No employment documents uploaded yet.
             </div>
           ) : (
@@ -264,15 +264,15 @@ export function EmploymentDocumentsSection({
               {documents.map((doc: any) => (
                 <div
                   key={doc._id}
-                  className="p-4 rounded-sm bg-surface-secondary border border-border flex items-center justify-between gap-4 text-xs"
+                  className="p-4 rounded-xl bg-surface border border-border flex items-center justify-between gap-4 text-xs"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-card-foreground text-base">{doc.fileName}</span>
-                      <Badge variant="outline" className="text-[9px] font-mono font-bold uppercase text-muted-foreground">{doc.documentType}</Badge>
+                      <span className="font-semibold text-foreground text-sm">{doc.fileName}</span>
+                      <Badge variant="secondary" className="text-[11px]">{doc.documentType}</Badge>
                       {getStatusBadge(doc.verificationStatus)}
                     </div>
-                    <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-mono">
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <span>File: {doc.originalFileName || doc.fileName}</span>
                       {doc.fileSize && <span>• {formatFileSize(doc.fileSize)}</span>}
                       {doc.uploadedDate && <span>• Uploaded {new Date(doc.uploadedDate).toLocaleDateString()}</span>}
@@ -286,7 +286,7 @@ export function EmploymentDocumentsSection({
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Button size="sm" variant="secondary" className="text-xs gap-1 font-mono uppercase">
+                        <Button size="sm" variant="secondary" className="text-xs gap-1">
                           <Eye className="h-3.5 w-3.5" /> View
                         </Button>
                       </a>
@@ -295,7 +295,7 @@ export function EmploymentDocumentsSection({
                       size="sm"
                       variant="destructive"
                       onClick={() => onDelete(doc._id)}
-                      className="text-xs gap-1 font-mono uppercase"
+                      className="text-xs gap-1"
                     >
                       <Trash2 className="h-3.5 w-3.5" /> Remove
                     </Button>
@@ -309,4 +309,5 @@ export function EmploymentDocumentsSection({
     </Card>
   );
 }
+
 

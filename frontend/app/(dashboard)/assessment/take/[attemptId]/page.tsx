@@ -118,8 +118,8 @@ export default function AssessmentPlayerPage() {
   if (loading || !assessmentData) {
     return (
       <PageWrapper className="max-w-4xl mx-auto space-y-6">
-        <Skeleton className="h-20 w-full rounded-sm bg-[#0A0A0A]" />
-        <Skeleton className="h-96 w-full rounded-sm bg-[#0A0A0A]" />
+        <Skeleton className="h-20 w-full rounded-xl bg-surface-secondary" />
+        <Skeleton className="h-96 w-full rounded-xl bg-surface-secondary" />
       </PageWrapper>
     );
   }
@@ -140,25 +140,25 @@ export default function AssessmentPlayerPage() {
   return (
     <PageWrapper className="max-w-4xl mx-auto space-y-6">
       {/* Top Header Bar */}
-      <div className="p-4 sm:p-5 rounded-sm bg-surface-secondary border border-border text-card-foreground flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="p-4 sm:p-5 rounded-xl bg-surface border border-border text-foreground flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xs">
         <div>
-          <h1 className="text-xl font-extrabold uppercase text-card-foreground flex items-center gap-2">
-            <Brain className="h-5 w-5 text-[#FFD400]" />
+          <h1 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <Brain className="h-5 w-5 text-primary" />
             {assessmentData.assessment.title}
           </h1>
-          <p className="text-xs text-muted-foreground font-mono mt-0.5 uppercase">
-            Question {currentIdx + 1} of {totalQuestions} • {answeredCount} / {totalQuestions} Answered
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Question {currentIdx + 1} of {totalQuestions} • {answeredCount} / {totalQuestions} answered
           </p>
         </div>
 
         {/* Real-time Timer Display */}
         <div
-          className={`flex items-center gap-2 px-4 py-2 rounded-sm font-mono text-sm font-extrabold transition-colors border ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md font-semibold text-xs transition-colors border ${
             isTimeCritical
-              ? 'bg-rose-950/80 text-rose-400 border-rose-500 animate-pulse'
+              ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400 border-rose-200 dark:border-rose-800 animate-pulse'
               : isTimeLow
-              ? 'bg-amber-950/80 text-amber-400 border-amber-500'
-              : 'bg-background text-[#FFD400] border-[#FFD400]/40'
+              ? 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+              : 'bg-surface-secondary text-primary border-border'
           }`}
         >
           <Clock className="h-4 w-4" />
@@ -168,23 +168,23 @@ export default function AssessmentPlayerPage() {
 
       {/* Main Question Interface */}
       {currentQuestion && (
-        <Card className="rounded-sm">
-          <CardHeader className="p-5 pb-3 border-b border-border">
+        <Card className="rounded-xl p-6">
+          <CardHeader className="p-0 pb-4 border-b border-border space-y-3">
             <div className="flex justify-between items-center">
-              <Badge variant="default" className="text-[10px] font-mono font-bold uppercase bg-[#FFD400]/10 text-[#FFD400] border-[#FFD400]/40">
+              <Badge variant="blue" className="text-xs">
                 Topic: {currentQuestion.topic}
               </Badge>
-              <Badge variant="default" className="text-[10px] font-mono uppercase bg-surface-secondary text-muted-foreground border-border">
+              <Badge variant="secondary" className="text-xs">
                 Difficulty: {currentQuestion.difficulty}
               </Badge>
             </div>
 
-            <CardTitle className="text-xl font-bold text-card-foreground pt-2 leading-relaxed uppercase">
+            <CardTitle className="text-lg font-semibold text-foreground pt-1 leading-relaxed">
               {currentIdx + 1}. {currentQuestion.question}
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="p-6 space-y-4">
+          <CardContent className="p-0 pt-6 space-y-4">
             {/* Options List */}
             <div className="space-y-2.5">
               {currentQuestion.options.map((optionText, optionIdx) => {
@@ -196,17 +196,17 @@ export default function AssessmentPlayerPage() {
                     key={optionIdx}
                     type="button"
                     onClick={() => handleSelectOption(currentQuestion._id, optionIdx)}
-                    className={`w-full p-4 rounded-sm text-left border text-xs sm:text-sm font-sans transition-all flex items-start gap-3 cursor-pointer ${
+                    className={`w-full p-4 rounded-md text-left text-xs sm:text-sm transition-all flex items-start gap-3 cursor-pointer ${
                       isSelected
-                        ? 'bg-[#FFD400]/10 border-[#FFD400] text-card-foreground font-bold'
-                        : 'bg-surface-secondary border-border hover:border-border/80 text-muted-foreground'
+                        ? 'bg-blue-50/50 dark:bg-blue-950/20 border-primary text-foreground font-semibold shadow-xs'
+                        : 'bg-surface border-border hover:border-primary/40 text-muted-foreground'
                     }`}
                   >
                     <span
-                      className={`h-6 w-6 rounded-sm font-mono text-xs flex items-center justify-center shrink-0 font-bold ${
+                      className={`h-6 w-6 rounded-md text-xs flex items-center justify-center shrink-0 font-medium ${
                         isSelected
-                          ? 'bg-[#FFD400] text-black'
-                          : 'bg-surface text-muted-foreground'
+                          ? 'bg-primary text-white'
+                          : 'bg-surface-secondary text-muted-foreground'
                       }`}
                     >
                       {optionLetters[optionIdx]}
@@ -223,7 +223,7 @@ export default function AssessmentPlayerPage() {
                 variant="secondary"
                 disabled={currentIdx === 0}
                 onClick={() => setCurrentIdx((prev) => prev - 1)}
-                className="gap-2 text-xs font-mono font-bold uppercase"
+                className="gap-2 text-xs"
               >
                 <ChevronLeft className="h-4 w-4" />
                 Previous
@@ -234,19 +234,19 @@ export default function AssessmentPlayerPage() {
                   <Button
                     onClick={() => setCurrentIdx((prev) => prev + 1)}
                     variant="primary"
-                    className="gap-2 text-xs font-bold uppercase"
+                    className="gap-2 text-xs"
                   >
-                    Next Question
-                    <ChevronRight className="h-4 w-4 text-black" />
+                    Next question
+                    <ChevronRight className="h-4 w-4 text-white" />
                   </Button>
                 ) : (
                   <Button
                     onClick={() => setIsSubmitModalOpen(true)}
                     variant="primary"
-                    className="gap-2 text-xs font-bold uppercase"
+                    className="gap-2 text-xs"
                   >
-                    Review & Submit
-                    <Send className="h-4 w-4 text-black" />
+                    Review & submit
+                    <Send className="h-4 w-4 text-white" />
                   </Button>
                 )}
               </div>
@@ -256,12 +256,12 @@ export default function AssessmentPlayerPage() {
       )}
 
       {/* 20-Question Quick Jump Palette */}
-      <Card className="p-4 rounded-sm">
-        <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center justify-between">
-          <span>Question Overview ({totalQuestions} Total)</span>
-          <span className="text-[10px] text-muted-foreground font-normal">Click number to jump</span>
+      <Card className="p-5 rounded-xl">
+        <h3 className="text-xs font-medium text-muted-foreground mb-3 flex items-center justify-between">
+          <span>Question overview ({totalQuestions} total)</span>
+          <span className="text-xs text-muted-foreground">Click number to jump</span>
         </h3>
-        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 font-mono">
+        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
           {questions.map((q, idx) => {
             const isAnswered = userAnswers[q._id] !== undefined;
             const isCurrent = idx === currentIdx;
@@ -271,12 +271,12 @@ export default function AssessmentPlayerPage() {
                 key={q._id}
                 type="button"
                 onClick={() => setCurrentIdx(idx)}
-                className={`h-9 w-full rounded-sm text-xs font-bold transition-all flex items-center justify-center border ${
+                className={`h-9 w-full rounded-md text-xs font-medium transition-all flex items-center justify-center border ${
                   isCurrent
-                    ? 'border-[#FFD400] bg-[#FFD400]/20 text-[#FFD400]'
+                    ? 'border-primary bg-primary text-white font-semibold'
                     : isAnswered
-                    ? 'bg-surface-secondary border-[#FFD400]/40 text-[#FFD400]'
-                    : 'bg-surface-secondary border-border text-muted-foreground hover:border-border/80'
+                    ? 'bg-blue-50 dark:bg-blue-950/40 border-primary/30 text-primary'
+                    : 'bg-surface-secondary/50 border-border text-muted-foreground hover:border-primary/40'
                 }`}
               >
                 {idx + 1}
@@ -288,26 +288,26 @@ export default function AssessmentPlayerPage() {
 
       {/* Confirmation Modal */}
       <Dialog open={isSubmitModalOpen} onOpenChange={setIsSubmitModalOpen}>
-        <DialogContent className="max-w-md bg-card border-border text-card-foreground rounded-sm">
+        <DialogContent className="max-w-md bg-card border-border text-card-foreground rounded-xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold uppercase text-card-foreground flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-[#FFD400]" />
-              SUBMIT ASSESSMENT?
+            <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Submit assessment?
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground font-mono">
-              You have answered <strong className="text-card-foreground">{answeredCount} of {totalQuestions}</strong> questions.
+            <DialogDescription className="text-xs text-muted-foreground">
+              You have answered <strong className="text-foreground">{answeredCount} of {totalQuestions}</strong> questions.
             </DialogDescription>
           </DialogHeader>
 
           {unansweredCount > 0 && (
-            <div className="p-3 rounded-sm bg-amber-950/40 border border-amber-500/40 text-xs text-amber-300 font-mono">
-              ⚠️ You still have <strong>{unansweredCount} unanswered question{unansweredCount > 1 ? 's' : ''}</strong>. Unanswered questions will be scored as incorrect.
+            <div className="p-3 rounded-md bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-xs text-amber-700 dark:text-amber-300">
+              You still have <strong>{unansweredCount} unanswered question{unansweredCount > 1 ? 's' : ''}</strong>. Unanswered questions will be scored as incorrect.
             </div>
           )}
 
           <DialogFooter className="mt-4 gap-2">
-            <Button variant="secondary" onClick={() => setIsSubmitModalOpen(false)} className="text-xs font-mono uppercase">
-              Back to Player
+            <Button variant="secondary" onClick={() => setIsSubmitModalOpen(false)} className="text-xs">
+              Back to assessment
             </Button>
             <Button
               onClick={() => {
@@ -316,10 +316,10 @@ export default function AssessmentPlayerPage() {
               }}
               isLoading={submitMutation.isPending}
               variant="primary"
-              className="font-bold text-xs uppercase gap-2"
+              className="text-xs gap-2"
             >
-              <Send className="h-4 w-4 text-black" />
-              Confirm & Submit
+              <Send className="h-4 w-4 text-white" />
+              Confirm & submit
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -327,4 +327,5 @@ export default function AssessmentPlayerPage() {
     </PageWrapper>
   );
 }
+
 

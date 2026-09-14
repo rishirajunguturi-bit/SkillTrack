@@ -142,7 +142,7 @@ export function SkillSelect({
       onKeyDown={handleKeyDown}
     >
       {label && (
-        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 font-mono">
+        <label className="block text-sm font-medium text-foreground">
           {label}
         </label>
       )}
@@ -160,33 +160,33 @@ export function SkillSelect({
           }
         }}
         className={cn(
-          'flex items-center justify-between w-full h-11 px-3.5 rounded-sm border text-sm transition-all cursor-pointer bg-[#0A0A0A] focus:outline-none',
+          'flex items-center justify-between w-full h-10 px-3.5 rounded-md border text-sm transition-all cursor-pointer bg-surface focus:outline-none',
           error
-            ? 'border-rose-500 focus:ring-1 focus:ring-rose-500'
+            ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
             : isOpen
-            ? 'border-[#FFD400] ring-1 ring-[#FFD400]'
-            : 'border-white/15 hover:border-white/30',
-          disabled && 'opacity-40 cursor-not-allowed bg-[#111111]'
+            ? 'border-primary ring-2 ring-primary/20'
+            : 'border-border hover:border-muted-foreground/30',
+          disabled && 'opacity-50 cursor-not-allowed bg-surface-secondary'
         )}
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
           {selectedSkill ? (
-            <Code className="h-4 w-4 text-[#FFD400] shrink-0" />
+            <Code className="h-4 w-4 text-primary shrink-0" />
           ) : (
-            <Search className="h-4 w-4 text-zinc-500 shrink-0" />
+            <Search className="h-4 w-4 text-muted-foreground shrink-0" />
           )}
 
           {selectedSkill ? (
             <div className="flex items-center gap-2 truncate">
-              <span className="font-bold text-white truncate">
+              <span className="font-semibold text-foreground truncate">
                 {selectedSkill.name}
               </span>
-              <span className="text-[11px] text-zinc-400 font-mono truncate">
+              <span className="text-xs text-muted-foreground truncate">
                 • {selectedSkill.category}
               </span>
             </div>
           ) : (
-            <span className="text-zinc-500 font-medium truncate">
+            <span className="text-muted-foreground font-normal truncate">
               {placeholder}
             </span>
           )}
@@ -197,7 +197,7 @@ export function SkillSelect({
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 rounded-sm text-zinc-400 hover:text-white hover:bg-[#171717] transition-colors"
+              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-secondary transition-colors"
               title="Clear skill"
             >
               <X className="h-3.5 w-3.5" />
@@ -205,14 +205,14 @@ export function SkillSelect({
           )}
           <ChevronDown
             className={cn(
-              'h-4 w-4 text-zinc-400 transition-transform duration-200',
-              isOpen && 'transform rotate-180 text-[#FFD400]'
+              'h-4 w-4 text-muted-foreground transition-transform duration-200',
+              isOpen && 'transform rotate-180 text-primary'
             )}
           />
         </div>
       </div>
 
-      {error && <p className="text-xs text-rose-400 font-semibold">{error}</p>}
+      {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
 
       {/* Custom Animated Combobox Popover */}
       <AnimatePresence>
@@ -223,12 +223,12 @@ export function SkillSelect({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: -4 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-0 right-0 top-full mt-1 z-50 bg-[#0A0A0A] border border-white/15 rounded-sm shadow-2xl overflow-hidden"
+            className="absolute left-0 right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden"
           >
             {/* Search Input Header */}
-            <div className="p-2.5 border-b border-white/10 bg-[#111111]">
+            <div className="p-2.5 border-b border-border bg-surface-secondary/50">
               <div className="relative flex items-center">
-                <Search className="h-4 w-4 text-zinc-400 absolute left-3" />
+                <Search className="h-4 w-4 text-muted-foreground absolute left-3" />
                 <input
                   ref={searchInputRef}
                   type="text"
@@ -238,13 +238,13 @@ export function SkillSelect({
                     setHighlightedIndex(0);
                   }}
                   placeholder="Search technical skills (e.g. React, Python)..."
-                  className="w-full h-9 pl-9 pr-8 text-xs bg-[#0A0A0A] border border-white/15 rounded-sm focus:outline-none focus:border-[#FFD400] focus:ring-1 focus:ring-[#FFD400] text-white placeholder:text-zinc-500"
+                  className="w-full h-9 pl-9 pr-8 text-xs bg-surface border border-border rounded-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 text-zinc-400 hover:text-white"
+                    className="absolute right-2.5 text-muted-foreground hover:text-foreground"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -255,18 +255,18 @@ export function SkillSelect({
             {/* Scrollable Grouped Skill List */}
             <div className="max-h-80 overflow-y-auto p-1.5 space-y-3 text-xs scrollbar-thin">
               {isLoading ? (
-                <div className="flex items-center justify-center py-8 gap-2 text-xs text-zinc-400 font-medium">
-                  <RefreshCw className="h-4 w-4 animate-spin text-[#FFD400]" />
+                <div className="flex items-center justify-center py-8 gap-2 text-xs text-muted-foreground font-medium">
+                  <RefreshCw className="h-4 w-4 animate-spin text-primary" />
                   <span>Loading skill catalog...</span>
                 </div>
               ) : isError ? (
-                <div className="text-center py-6 space-y-2 text-rose-400 text-xs">
+                <div className="text-center py-6 space-y-2 text-red-500 text-xs">
                   <p>Unable to load skills from backend.</p>
                   {onRetry && (
                     <button
                       type="button"
                       onClick={onRetry}
-                      className="px-3 py-1 rounded-sm border border-rose-500/30 text-rose-400 font-semibold hover:bg-rose-950/50"
+                      className="px-3 py-1 rounded-md border border-red-200 text-red-600 font-medium hover:bg-red-50"
                     >
                       Retry
                     </button>
@@ -275,9 +275,9 @@ export function SkillSelect({
               ) : Object.keys(groupedSkills).length > 0 ? (
                 Object.entries(groupedSkills).map(([category, items]) => (
                   <div key={category} className="space-y-1">
-                    {/* Uppercase Category Header */}
-                    <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#FFD400] px-2.5 py-1 rounded-sm bg-[#FFD400]/10 flex items-center gap-1.5 font-mono">
-                      <Sparkles className="h-3 w-3 text-[#FFD400]" />
+                    {/* Category Header */}
+                    <div className="text-xs font-semibold text-muted-foreground px-2.5 py-1 rounded-md bg-surface-secondary/50 flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-primary" />
                       <span>{category}</span>
                     </div>
 
@@ -297,12 +297,12 @@ export function SkillSelect({
                             onClick={() => handleSelect(skill._id)}
                             onMouseEnter={() => setHighlightedIndex(flatIdx)}
                             className={cn(
-                              'w-full text-left px-3 py-2 rounded-sm flex items-center justify-between transition-colors',
+                              'w-full text-left px-3 py-2 rounded-md flex items-center justify-between transition-colors',
                               isSelected
-                                ? 'bg-[#FFD400]/10 text-[#FFD400] font-bold border-l-2 border-[#FFD400]'
+                                ? 'bg-[#ffad8a]/15 text-[#ffad8a] font-bold border-l-2 border-[#ffad8a] rounded-xl'
                                 : isHighlighted
-                                ? 'bg-[#171717] text-white font-semibold'
-                                : 'text-zinc-300 hover:bg-[#171717]'
+                                ? 'bg-[#281a3a] text-foreground font-medium'
+                                : 'text-foreground hover:bg-[#281a3a]/60'
                             )}
                           >
                             <div className="flex items-center gap-2.5 min-w-0 pr-2">
@@ -310,15 +310,15 @@ export function SkillSelect({
                                 className={cn(
                                   'h-3.5 w-3.5 shrink-0',
                                   isSelected
-                                    ? 'text-[#FFD400]'
-                                    : 'text-zinc-500'
+                                    ? 'text-primary'
+                                    : 'text-muted-foreground'
                                 )}
                               />
                               <span className="truncate">{skill.name}</span>
                             </div>
 
                             {isSelected && (
-                              <Check className="h-4 w-4 text-[#FFD400] shrink-0" />
+                              <Check className="h-4 w-4 text-primary shrink-0" />
                             )}
                           </button>
                         );
@@ -327,8 +327,8 @@ export function SkillSelect({
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 space-y-1 text-zinc-400 text-xs">
-                  <p className="font-semibold text-white">No skills found.</p>
+                <div className="text-center py-8 space-y-1 text-muted-foreground text-xs">
+                  <p className="font-medium text-foreground">No skills found.</p>
                   <p className="text-[11px]">Try another search term.</p>
                 </div>
               )}
@@ -339,4 +339,5 @@ export function SkillSelect({
     </div>
   );
 }
+
 

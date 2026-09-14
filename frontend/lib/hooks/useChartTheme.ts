@@ -15,14 +15,15 @@ export function useChartTheme() {
 
   return {
     isDark,
-    textColor: isDark ? '#FFFFFF' : '#080808',
-    secondaryTextColor: isDark ? '#A3A3A3' : '#4A4A4A',
-    gridColor: isDark ? 'rgba(255, 255, 255, 0.10)' : 'rgba(0, 0, 0, 0.08)',
-    tooltipBg: isDark ? '#0A0A0A' : '#FFFFFF',
-    tooltipBorder: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
-    tooltipText: isDark ? '#FFFFFF' : '#080808',
-    primaryColor: '#FFD400',
-    primaryHover: isDark ? '#FFE033' : '#E6BF00',
-    accentColor: '#FFD400',
+    textColor: isDark ? '#F8FAFC' : '#0F172A',
+    secondaryTextColor: isDark ? '#94A3B8' : '#64748B',
+    gridColor: isDark ? '#334155' : '#E2E8F0',
+    tooltipBg: isDark ? '#111827' : '#FFFFFF',
+    tooltipBorder: isDark ? '#334155' : '#E2E8F0',
+    tooltipText: isDark ? '#F8FAFC' : '#0F172A',
+    primaryColor: isDark ? '#3B82F6' : '#2563EB',
+    primaryHover: isDark ? '#60A5FA' : '#1D4ED8',
+    accentColor: isDark ? '#60A5FA' : '#2563EB',
   };
 }
+

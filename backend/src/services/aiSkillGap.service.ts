@@ -284,7 +284,7 @@ export class AiSkillGapService {
     }
 
     try {
-      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = this.genAI.getGenerativeModel({ model: env.GEMINI_MODEL || 'gemini-2.5-flash' });
 
       const promptData = {
         careerRole: careerRoleName,
@@ -365,7 +365,7 @@ CRITICAL RULE: Return ONLY valid raw JSON without markdown code fences or backti
     if (!this.genAI) return fallbackResponse;
 
     try {
-      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = this.genAI.getGenerativeModel({ model: env.GEMINI_MODEL || 'gemini-2.5-flash' });
       const prompt = `You are a chief engineering skilling strategist advising a technical training program director.
 Analyze this cohort skill performance report:
 - Cohort: ${params.cohort || 'All Cohorts'}

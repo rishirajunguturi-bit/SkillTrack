@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { env, validateCoreEnv } from './config/env';
+// Trigger dev server reload for env update
 import { connectDB } from './config/db';
 import { ensureSkillsSeeded, seedAdmin } from './seed';
 import { seedColleges } from './scripts/seedColleges';
@@ -25,6 +26,7 @@ import notificationRoutes from './routes/notification.routes';
 import trainingFeedbackRoutes from './routes/trainingFeedback.routes';
 import opportunityRoutes from './routes/opportunity.routes';
 import careerStatusRoutes from './routes/careerStatus.routes';
+import programRoutes from './routes/program.routes';
 
 import path from 'path';
 
@@ -72,6 +74,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/training-feedback', trainingFeedbackRoutes);
 app.use('/api/opportunities', opportunityRoutes);
 app.use('/api/career-status', careerStatusRoutes);
+app.use('/api', programRoutes);
 
 // Global Error Handler
 app.use(errorHandler);
@@ -79,12 +82,15 @@ app.use(errorHandler);
 // Start Server and Auto-Seed DB
 const PORT = parseInt(env.PORT, 10) || 5000;
 
+import { emailService } from './services/email.service';
+
 connectDB().then(async () => {
   await ensureSkillsSeeded();
   await seedAdmin();
   await seedColleges();
   await seedCareerRoles();
   await seedAssessments();
+  await emailService.verifySmtpConnection();
   app.listen(PORT, () => {
     console.log(`🚀 [SkillTrack Server] Running on http://localhost:${PORT}`);
   });

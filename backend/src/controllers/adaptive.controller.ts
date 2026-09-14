@@ -45,3 +45,40 @@ export const updateRecommendationStatus = async (
     next(error);
   }
 };
+
+export const askAiAssistant = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { message, history } = req.body;
+    if (!message || typeof message !== 'string' || !message.trim()) {
+      res.status(400).json({ success: false, message: 'Message string is required' });
+      return;
+    }
+    const result = await adaptiveService.askAiAssistant(req.user!.userId, message.trim(), history);
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAiUsage = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const usage = await adaptiveService.getAiUsage(req.user!.userId);
+    res.status(200).json({
+      success: true,
+      data: usage,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

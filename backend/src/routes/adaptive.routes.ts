@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.middleware';
-import { getAdaptiveState, analyzeProgress, updateRecommendationStatus } from '../controllers/adaptive.controller';
+import { getAdaptiveState, analyzeProgress, updateRecommendationStatus, askAiAssistant, getAiUsage } from '../controllers/adaptive.controller';
 
 const router = Router();
 
@@ -10,5 +10,7 @@ router.use(authenticate);
 router.get('/', getAdaptiveState);
 router.post('/analyze', analyzeProgress);
 router.patch('/recommendations/:id', updateRecommendationStatus);
+router.get('/assistant/usage', getAiUsage);
+router.post('/assistant', askAiAssistant);
 
 export default router;

@@ -12,6 +12,8 @@ import { roadmapService } from './roadmap.service';
 import { skillGapService } from './skillGap.service';
 import { studyPlanService } from './studyPlan.service';
 import { aiAdaptiveService, AdaptiveAnalysisInput } from './aiAdaptive.service';
+import { AiUsage } from '../models/aiUsage.model';
+import { env } from '../config/env';
 import { ApiError } from '../utils/apiError';
 
 export class AdaptiveService {
@@ -273,6 +275,91 @@ export class AdaptiveService {
     rec.status = status;
     await rec.save();
     return rec;
+  }
+
+  async askAiAssistant(
+    userId: string,
+    userMessage: string,
+    chatHistory?: Array<{ role: 'user' | 'assistant'; text: string }>
+  ): Promise<{ reply: string }> {
+    const user = await User.findById(userId);
+    if (!user) throw new ApiError(404, 'User profile not found.');
+
+    let gapAnalysis: any = null;
+    try {
+      gapAnalysis = await skillGapService.getStudentSkillGap(userId);
+    } catch (e) {}
+
+    const completedAttempts = await AssessmentAttempt.find({ userId, status: 'COMPLETED' })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate('skillId', 'name');
+
+    const recentAssessments = completedAttempts.map((att: any) => ({
+      skillName: att.skillId?.name || 'Skill Assessment',
+      score: att.score,
+      percentage: att.percentage,
+      date: att.createdAt ? new Date(att.createdAt).toISOString().split('T')[0] : '',
+    }));
+
+    let studyPlan: any = null;
+    try {
+      studyPlan = await studyPlanService.getStudentStudyPlan(userId);
+    } catch (e) {}
+
+    const topGaps = gapAnalysis?.topPriorities?.map((p: any) => p.name) || [];
+    const strongSkills = gapAnalysis?.strongSkills?.map((s: any) => s.name) || [];
+
+    const userContext = {
+      name: user.name || 'Trainee',
+      targetRole: user.targetRole || gapAnalysis?.careerRoleName || 'Software Engineer',
+      degree: user.degree,
+      graduationYear: user.graduationYear,
+      overallReadiness: gapAnalysis?.overallReadiness,
+      readinessLabel: gapAnalysis?.readinessLabel,
+      topGaps,
+      strongSkills,
+      recentAssessments,
+      studyPlanProgress: studyPlan?.overallProgress,
+    };
+
+    return aiAdaptiveService.chatWithTraineeAssistant(userId, userContext, userMessage, chatHistory);
+  }
+
+  async getAiUsage(userId: string) {
+    const today = new Date().toISOString().split('T')[0];
+    const limit = env.AI_DAILY_REQUEST_LIMIT || 20;
+
+    let usage = await AiUsage.findOne({ userId, date: today });
+    if (!usage) {
+      try {
+        usage = await AiUsage.create({
+          userId,
+          date: today,
+          requestsUsed: 0,
+          requestsLimit: limit,
+          inputTokens: 0,
+          outputTokens: 0,
+          totalTokens: 0,
+        });
+      } catch (e) {
+        usage = await AiUsage.findOne({ userId, date: today });
+      }
+    }
+
+    const requestsUsed = usage?.requestsUsed || 0;
+    const requestsRemaining = Math.max(0, limit - requestsUsed);
+    const usagePercentage = Math.min(100, Math.round((requestsUsed / limit) * 100));
+
+    return {
+      requestsUsed,
+      requestLimit: limit,
+      requestsRemaining,
+      usagePercentage,
+      inputTokens: usage?.inputTokens || 0,
+      outputTokens: usage?.outputTokens || 0,
+      totalTokens: usage?.totalTokens || 0,
+    };
   }
 }
 

@@ -167,3 +167,93 @@ export const generateAiQuestionsForSkill = async (req: AuthenticatedRequest, res
     next(error);
   }
 };
+
+export const createQuestion = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const question = await assessmentService.createQuestion(req.params.id, req.body);
+    res.status(201).json({
+      success: true,
+      message: 'Question created successfully',
+      data: { question },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateQuestion = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const question = await assessmentService.updateQuestion(req.params.questionId, req.body);
+    res.status(200).json({
+      success: true,
+      message: 'Question updated successfully',
+      data: { question },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteQuestion = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    await assessmentService.deleteQuestion(req.params.questionId);
+    res.status(200).json({
+      success: true,
+      message: 'Question deleted successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const duplicateQuestion = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const question = await assessmentService.duplicateQuestion(req.params.questionId);
+    res.status(201).json({
+      success: true,
+      message: 'Question duplicated successfully',
+      data: { question },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const reorderQuestions = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { questionOrders } = req.body;
+    await assessmentService.reorderQuestions(req.params.id, questionOrders || []);
+    res.status(200).json({
+      success: true,
+      message: 'Question order updated successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteAssessment = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const result = await assessmentService.deleteAssessment(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: result.archived ? 'Assessment archived (contains student attempt history)' : 'Assessment deleted successfully',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const duplicateAssessment = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const assessment = await assessmentService.duplicateAssessment(req.params.id);
+    res.status(201).json({
+      success: true,
+      message: 'Assessment duplicated successfully',
+      data: { assessment },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -124,7 +124,7 @@ export function CareerRoleSelect({
   return (
     <div className={cn('space-y-1.5 relative select-none', className)} ref={containerRef} onKeyDown={handleKeyDown}>
       {label && (
-        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 font-mono">
+        <label className="block text-sm font-medium text-foreground">
           {label}
         </label>
       )}
@@ -141,21 +141,21 @@ export function CareerRoleSelect({
           }
         }}
         className={cn(
-          'flex items-center justify-between w-full h-11 px-3.5 rounded-sm border text-sm transition-all cursor-pointer bg-[#0A0A0A] focus:outline-none',
+          'flex items-center justify-between w-full h-10 px-3.5 rounded-md border text-sm transition-all cursor-pointer bg-surface focus:outline-none',
           error
-            ? 'border-rose-500 focus:ring-1 focus:ring-rose-500'
+            ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
             : isOpen
-            ? 'border-[#FFD400] ring-1 ring-[#FFD400]'
-            : 'border-white/15 hover:border-white/30',
-          disabled && 'opacity-40 cursor-not-allowed bg-[#111111]'
+            ? 'border-primary ring-2 ring-primary/20'
+            : 'border-border hover:border-muted-foreground/30',
+          disabled && 'opacity-50 cursor-not-allowed bg-surface-secondary'
         )}
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
-          <Target className="h-4 w-4 text-[#FFD400] shrink-0" />
+          <Target className="h-4 w-4 text-primary shrink-0" />
           <span
             className={cn(
-              'truncate font-medium',
-              value ? 'text-white font-bold' : 'text-zinc-500'
+              'truncate font-normal',
+              value ? 'text-foreground font-semibold' : 'text-muted-foreground'
             )}
           >
             {value || placeholder}
@@ -167,7 +167,7 @@ export function CareerRoleSelect({
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 rounded-sm text-zinc-400 hover:text-white hover:bg-[#171717] transition-colors"
+              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-secondary transition-colors"
               title="Clear career selection"
             >
               <X className="h-3.5 w-3.5" />
@@ -175,14 +175,14 @@ export function CareerRoleSelect({
           )}
           <ChevronDown
             className={cn(
-              'h-4 w-4 text-zinc-400 transition-transform duration-200',
-              isOpen && 'transform rotate-180 text-[#FFD400]'
+              'h-4 w-4 text-muted-foreground transition-transform duration-200',
+              isOpen && 'transform rotate-180 text-primary'
             )}
           />
         </div>
       </div>
 
-      {error && <p className="text-xs text-rose-400 font-semibold">{error}</p>}
+      {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
 
       {/* Popover List */}
       <AnimatePresence>
@@ -192,12 +192,12 @@ export function CareerRoleSelect({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: -4 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-0 right-0 top-full mt-1 z-50 bg-[#0A0A0A] border border-white/15 rounded-sm shadow-2xl overflow-hidden"
+            className="absolute left-0 right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden"
           >
             {/* Search Header */}
-            <div className="p-2.5 border-b border-white/10 bg-[#111111]">
+            <div className="p-2.5 border-b border-border bg-surface-secondary/50">
               <div className="relative flex items-center">
-                <Search className="h-4 w-4 text-zinc-400 absolute left-3" />
+                <Search className="h-4 w-4 text-muted-foreground absolute left-3" />
                 <input
                   ref={searchInputRef}
                   type="text"
@@ -207,13 +207,13 @@ export function CareerRoleSelect({
                     setHighlightedIndex(0);
                   }}
                   placeholder="Search career role (e.g. SDE, Data Scientist)..."
-                  className="w-full h-9 pl-9 pr-8 text-xs bg-[#0A0A0A] border border-white/15 rounded-sm focus:outline-none focus:border-[#FFD400] focus:ring-1 focus:ring-[#FFD400] text-white placeholder:text-zinc-500"
+                  className="w-full h-9 pl-9 pr-8 text-xs bg-surface border border-border rounded-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 text-zinc-400 hover:text-white"
+                    className="absolute right-2.5 text-muted-foreground hover:text-foreground"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -224,17 +224,17 @@ export function CareerRoleSelect({
             {/* Scrollable Category Options */}
             <div className="max-h-80 overflow-y-auto p-1.5 space-y-3 text-xs scrollbar-thin">
               {isLoading ? (
-                <div className="flex items-center justify-center py-8 gap-2 text-xs text-zinc-400 font-medium">
-                  <RefreshCw className="h-4 w-4 animate-spin text-[#FFD400]" />
+                <div className="flex items-center justify-center py-8 gap-2 text-xs text-muted-foreground font-medium">
+                  <RefreshCw className="h-4 w-4 animate-spin text-primary" />
                   <span>Loading career roles...</span>
                 </div>
               ) : isError ? (
-                <div className="text-center py-6 space-y-2 text-rose-400 text-xs">
+                <div className="text-center py-6 space-y-2 text-red-500 text-xs">
                   <p>Unable to load career roles.</p>
                   <button
                     type="button"
                     onClick={() => refetch()}
-                    className="px-3 py-1 rounded-sm border border-rose-500/30 text-rose-400 font-semibold hover:bg-rose-950/50"
+                    className="px-3 py-1 rounded-md border border-red-200 text-red-600 font-medium hover:bg-red-50"
                   >
                     Retry
                   </button>
@@ -242,8 +242,8 @@ export function CareerRoleSelect({
               ) : Object.keys(groupedRoles).length > 0 ? (
                 Object.entries(groupedRoles).map(([cat, items]) => (
                   <div key={cat} className="space-y-1">
-                    <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#FFD400] px-2.5 py-1 rounded-sm bg-[#FFD400]/10 flex items-center gap-1.5 font-mono">
-                      <Briefcase className="h-3 w-3 text-[#FFD400]" />
+                    <div className="text-xs font-semibold text-muted-foreground px-2.5 py-1 rounded-md bg-surface-secondary/50 flex items-center gap-1.5">
+                      <Briefcase className="h-3.5 w-3.5 text-primary" />
                       <span>{cat}</span>
                     </div>
 
@@ -260,19 +260,19 @@ export function CareerRoleSelect({
                             onClick={() => handleSelect(role)}
                             onMouseEnter={() => setHighlightedIndex(flatIdx)}
                             className={cn(
-                              'w-full text-left px-3 py-2.5 rounded-sm flex flex-col gap-0.5 transition-colors',
+                              'w-full text-left px-3 py-2.5 rounded-md flex flex-col gap-0.5 transition-colors',
                               isSelected
-                                ? 'bg-[#FFD400]/10 text-[#FFD400] font-bold border-l-2 border-[#FFD400]'
+                                ? 'bg-[#ffad8a]/15 text-[#ffad8a] font-bold border-l-2 border-[#ffad8a] rounded-xl'
                                 : isHighlighted
-                                ? 'bg-[#171717] text-white font-semibold'
-                                : 'text-zinc-300 hover:bg-[#171717]'
+                                ? 'bg-[#281a3a] text-foreground font-medium'
+                                : 'text-foreground hover:bg-[#281a3a]/60'
                             )}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="truncate font-bold">{role.name}</span>
-                              {isSelected && <Check className="h-4 w-4 text-[#FFD400] shrink-0" />}
+                              <span className="truncate font-medium">{role.name}</span>
+                              {isSelected && <Check className="h-4 w-4 text-primary shrink-0" />}
                             </div>
-                            <p className="text-[10px] text-zinc-400 font-normal line-clamp-1">
+                            <p className="text-[11px] text-muted-foreground font-normal line-clamp-1">
                               {role.description}
                             </p>
                           </button>
@@ -282,8 +282,8 @@ export function CareerRoleSelect({
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 space-y-1 text-zinc-400 text-xs">
-                  <p className="font-semibold text-white">No career roles found.</p>
+                <div className="text-center py-8 space-y-1 text-muted-foreground text-xs">
+                  <p className="font-medium text-foreground">No career roles found.</p>
                   <p className="text-[11px]">Try another search term.</p>
                 </div>
               )}
@@ -294,4 +294,5 @@ export function CareerRoleSelect({
     </div>
   );
 }
+
 

@@ -19,7 +19,7 @@ export const onboardingSchema = z.object({
     college: z.string().min(1, 'College is required'),
     degree: z.string().min(1, 'Degree is required'),
     branch: z.string().min(1, 'Branch is required'),
-    graduationYear: z.number().min(2024).max(2032),
+    graduationYear: z.number().min(1990).max(2100),
     targetRole: z.string().min(1, 'Target role is required'),
     targetDomain: z.string().min(1, 'Target domain is required'),
     experienceLevel: z.enum(['Beginner', 'Intermediate', 'Advanced']),

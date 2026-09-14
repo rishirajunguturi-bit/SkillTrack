@@ -82,8 +82,10 @@ export class AssessmentService {
       }
     });
 
-    // 3. Fetch all active questions in bank for this assessment
-    const allPoolQuestions = await AssessmentQuestion.find({ assessmentId: assessment._id, isActive: true });
+    // 3. Fetch all active questions in bank for this assessment WITH +correctAnswer for mapping
+    const allPoolQuestions = await AssessmentQuestion.find({ assessmentId: assessment._id, isActive: true }).select(
+      '+correctAnswer'
+    );
     if (allPoolQuestions.length === 0) {
       throw new ApiError(500, 'No questions are currently available for this assessment.');
     }
@@ -124,7 +126,21 @@ export class AssessmentService {
     // Shuffle the final selected 20 questions
     selectedQuestions = this.shuffleArray(selectedQuestions).slice(0, targetCount);
 
-    // Create new attempt with questionIds snapshot
+    // Create randomized option order and snapshot mapping for each question
+    const questionSnapshots = selectedQuestions.map((q) => {
+      const indexed = q.options.map((optText, origIdx) => ({ text: optText, origIdx }));
+      const shuffledIndexed = this.shuffleArray(indexed);
+      const shuffledOptions = shuffledIndexed.map((item) => item.text);
+      const shuffledCorrectIndex = shuffledIndexed.findIndex((item) => item.origIdx === q.correctAnswer);
+
+      return {
+        questionId: q._id,
+        shuffledOptions,
+        shuffledCorrectIndex: shuffledCorrectIndex >= 0 ? shuffledCorrectIndex : 0,
+      };
+    });
+
+    // Create new attempt with questionIds & questionSnapshots snapshot
     attempt = await AssessmentAttempt.create({
       userId,
       assessmentId,
@@ -133,19 +149,23 @@ export class AssessmentService {
       startedAt: new Date(),
       status: 'IN_PROGRESS',
       totalQuestions: selectedQuestions.length,
+      questionSnapshots,
     });
 
-    // Return sanitized questions (no correctAnswer, no explanation)
-    const sanitizedQuestions = selectedQuestions.map((q, idx) => ({
-      _id: q._id,
-      assessmentId: q.assessmentId,
-      skillId: q.skillId,
-      topic: q.topic,
-      question: q.question,
-      options: q.options,
-      difficulty: q.difficulty,
-      order: idx + 1,
-    }));
+    // Return sanitized questions (shuffledOptions, no correctAnswer, no explanation)
+    const sanitizedQuestions = selectedQuestions.map((q, idx) => {
+      const snap = questionSnapshots[idx];
+      return {
+        _id: q._id,
+        assessmentId: q.assessmentId,
+        skillId: q.skillId,
+        topic: q.topic,
+        question: q.question,
+        options: snap.shuffledOptions,
+        difficulty: q.difficulty,
+        order: idx + 1,
+      };
+    });
 
     return {
       attemptId: attempt._id,
@@ -187,19 +207,32 @@ export class AssessmentService {
         if (found) questions.push(found);
       });
     } else {
-      questions = await AssessmentQuestion.find({ assessmentId: assessment._id, isActive: true }).limit(assessment.questionCount || 20);
+      questions = await AssessmentQuestion.find({ assessmentId: assessment._id, isActive: true }).limit(
+        assessment.questionCount || 20
+      );
     }
 
-    const sanitizedQuestions = questions.map((q, idx) => ({
-      _id: q._id,
-      assessmentId: q.assessmentId,
-      skillId: q.skillId,
-      topic: q.topic,
-      question: q.question,
-      options: q.options,
-      difficulty: q.difficulty,
-      order: idx + 1,
-    }));
+    const snapshotMap = new Map<string, { shuffledOptions: string[]; shuffledCorrectIndex: number }>();
+    if (attempt.questionSnapshots && attempt.questionSnapshots.length > 0) {
+      attempt.questionSnapshots.forEach((snap) => {
+        snapshotMap.set(snap.questionId.toString(), snap);
+      });
+    }
+
+    const sanitizedQuestions = questions.map((q, idx) => {
+      const snap = snapshotMap.get(q._id.toString());
+      return {
+        _id: q._id,
+        assessmentId: q.assessmentId,
+        skillId: q.skillId,
+        topic: q.topic,
+        question: q.question,
+        options:
+          snap && snap.shuffledOptions && snap.shuffledOptions.length === 4 ? snap.shuffledOptions : q.options,
+        difficulty: q.difficulty,
+        order: idx + 1,
+      };
+    });
 
     return {
       attemptId: attempt._id,
@@ -252,6 +285,13 @@ export class AssessmentService {
     const questionMap = new Map<string, IAssessmentQuestion>();
     questions.forEach((q) => questionMap.set(q._id.toString(), q));
 
+    const snapshotMap = new Map<string, number>();
+    if (attempt.questionSnapshots && attempt.questionSnapshots.length > 0) {
+      attempt.questionSnapshots.forEach((snap) => {
+        snapshotMap.set(snap.questionId.toString(), snap.shuffledCorrectIndex);
+      });
+    }
+
     let correctCount = 0;
     const evaluatedAnswers: any[] = [];
     const topicStats: { [topic: string]: { attempted: number; correct: number } } = {};
@@ -260,7 +300,11 @@ export class AssessmentService {
       const q = questionMap.get(ans.questionId);
       if (!q) return;
 
-      const isCorrect = ans.selectedOption === q.correctAnswer;
+      const targetCorrectIndex = snapshotMap.has(ans.questionId)
+        ? snapshotMap.get(ans.questionId)!
+        : q.correctAnswer;
+
+      const isCorrect = ans.selectedOption === targetCorrectIndex;
       if (isCorrect) correctCount++;
 
       evaluatedAnswers.push({
@@ -380,19 +424,32 @@ export class AssessmentService {
       );
     }
 
+    const snapshotMap = new Map<string, { shuffledOptions: string[]; shuffledCorrectIndex: number }>();
+    if (attempt.questionSnapshots && attempt.questionSnapshots.length > 0) {
+      attempt.questionSnapshots.forEach((snap) => {
+        snapshotMap.set(snap.questionId.toString(), snap);
+      });
+    }
+
     const answerMap = new Map<string, number>();
     attempt.answers.forEach((ans) => answerMap.set(ans.questionId.toString(), ans.selectedOption));
 
     const reviewList = questions.map((q) => {
       const selected = answerMap.get(q._id.toString());
+      const snap = snapshotMap.get(q._id.toString());
+      const displayOptions =
+        snap && snap.shuffledOptions && snap.shuffledOptions.length === 4 ? snap.shuffledOptions : q.options;
+      const displayCorrectIndex =
+        snap && snap.shuffledCorrectIndex !== undefined ? snap.shuffledCorrectIndex : q.correctAnswer;
+
       return {
         questionId: q._id,
         topic: q.topic,
         question: q.question,
-        options: q.options,
-        correctAnswer: q.correctAnswer,
+        options: displayOptions,
+        correctAnswer: displayCorrectIndex,
         selectedOption: selected !== undefined ? selected : -1,
-        isCorrect: selected === q.correctAnswer,
+        isCorrect: selected === displayCorrectIndex,
         explanation: q.explanation,
       };
     });
@@ -718,6 +775,134 @@ export class AssessmentService {
 
     const finalCount = await aiQuestionService.replenishQuestionPool(skillId, 100);
     return { createdCount: count, totalQuestions: finalCount };
+  }
+
+  async createQuestion(assessmentId: string, data: Partial<IAssessmentQuestion>): Promise<IAssessmentQuestion> {
+    const assessment = await Assessment.findById(assessmentId);
+    if (!assessment) throw new ApiError(404, 'Assessment not found.');
+
+    if (!data.options || data.options.length !== 4) {
+      throw new ApiError(400, 'Question must have exactly 4 options.');
+    }
+
+    if (data.correctAnswer === undefined || data.correctAnswer < 0 || data.correctAnswer > 3) {
+      throw new ApiError(400, 'Correct answer must be an option index between 0 and 3.');
+    }
+
+    const currentCount = await AssessmentQuestion.countDocuments({ assessmentId: assessment._id });
+    const order = data.order || currentCount + 1;
+
+    const question = await AssessmentQuestion.create({
+      ...data,
+      assessmentId: assessment._id,
+      skillId: assessment.skillId,
+      topic: data.topic || assessment.title,
+      order,
+      isActive: true,
+    });
+
+    return question;
+  }
+
+  async updateQuestion(questionId: string, data: Partial<IAssessmentQuestion>): Promise<IAssessmentQuestion> {
+    if (data.options && data.options.length !== 4) {
+      throw new ApiError(400, 'Question must have exactly 4 options.');
+    }
+
+    if (data.correctAnswer !== undefined && (data.correctAnswer < 0 || data.correctAnswer > 3)) {
+      throw new ApiError(400, 'Correct answer must be an option index between 0 and 3.');
+    }
+
+    const question = await AssessmentQuestion.findByIdAndUpdate(questionId, data, { new: true }).select('+correctAnswer +explanation');
+    if (!question) throw new ApiError(404, 'Question not found.');
+    return question;
+  }
+
+  async deleteQuestion(questionId: string): Promise<{ success: boolean }> {
+    const question = await AssessmentQuestion.findByIdAndDelete(questionId);
+    if (!question) throw new ApiError(404, 'Question not found.');
+    return { success: true };
+  }
+
+  async duplicateQuestion(questionId: string): Promise<IAssessmentQuestion> {
+    const question = await AssessmentQuestion.findById(questionId).select('+correctAnswer +explanation');
+    if (!question) throw new ApiError(404, 'Question not found.');
+
+    const currentCount = await AssessmentQuestion.countDocuments({ assessmentId: question.assessmentId });
+
+    const newQuestion = await AssessmentQuestion.create({
+      assessmentId: question.assessmentId,
+      skillId: question.skillId,
+      topic: question.topic,
+      question: `${question.question} (Copy)`,
+      options: [...question.options],
+      correctAnswer: question.correctAnswer,
+      explanation: question.explanation,
+      difficulty: question.difficulty,
+      points: question.points,
+      order: currentCount + 1,
+      isActive: true,
+    });
+
+    return newQuestion;
+  }
+
+  async reorderQuestions(assessmentId: string, questionOrders: Array<{ id: string; order: number }>): Promise<boolean> {
+    const updateOps = questionOrders.map((item) =>
+      AssessmentQuestion.updateOne({ _id: item.id, assessmentId }, { $set: { order: item.order } })
+    );
+    await Promise.all(updateOps);
+    return true;
+  }
+
+  async deleteAssessment(id: string): Promise<{ success: boolean; archived: boolean }> {
+    const attemptCount = await AssessmentAttempt.countDocuments({ assessmentId: id });
+    if (attemptCount > 0) {
+      // Soft-delete/deactivate to preserve historical attempt records
+      await Assessment.findByIdAndUpdate(id, { isActive: false });
+      return { success: true, archived: true };
+    } else {
+      await AssessmentQuestion.deleteMany({ assessmentId: id });
+      await Assessment.findByIdAndDelete(id);
+      return { success: true, archived: false };
+    }
+  }
+
+  async duplicateAssessment(id: string): Promise<IAssessment> {
+    const original = await Assessment.findById(id);
+    if (!original) throw new ApiError(404, 'Original assessment not found.');
+
+    const copy = await Assessment.create({
+      title: `${original.title} (Copy)`,
+      skillId: original.skillId,
+      description: original.description,
+      difficulty: original.difficulty,
+      questionCount: original.questionCount,
+      timeLimit: original.timeLimit,
+      passingScore: original.passingScore,
+      isActive: false, // Default to inactive/draft
+    });
+
+    // Duplicate question bank
+    const originalQuestions = await AssessmentQuestion.find({ assessmentId: original._id }).select('+correctAnswer +explanation');
+    if (originalQuestions.length > 0) {
+      const newQuestions = originalQuestions.map((q) => ({
+        assessmentId: copy._id,
+        skillId: copy.skillId,
+        topic: q.topic,
+        question: q.question,
+        options: [...q.options],
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation,
+        difficulty: q.difficulty,
+        points: q.points,
+        order: q.order,
+        isActive: true,
+      }));
+      await AssessmentQuestion.insertMany(newQuestions);
+    }
+
+    return copy;
   }
 }
 

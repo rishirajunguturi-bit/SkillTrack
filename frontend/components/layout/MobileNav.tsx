@@ -22,24 +22,23 @@ export function MobileNav() {
 
   return (
     <div className="md:hidden flex items-center gap-2">
-      <ThemeToggle />
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle Navigation Menu"
-        className="p-2 rounded-sm text-muted-foreground hover:bg-surface-hover hover:text-foreground cursor-pointer"
+        className="p-2 rounded-md text-muted-foreground hover:bg-surface-secondary hover:text-foreground cursor-pointer"
       >
         {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
       {isOpen && (
-        <div className="fixed inset-x-0 top-16 z-50 border-b border-border bg-surface p-4 shadow-2xl space-y-4 max-h-[80vh] overflow-y-auto text-foreground">
+        <div className="fixed inset-x-0 top-16 z-50 border-b border-border bg-surface p-4 shadow-xl space-y-4 max-h-[80vh] overflow-y-auto text-foreground animate-in slide-in-from-top-2 duration-150">
           {isAdmin ? (
             /* TRAINER PORTAL MOBILE NAV */
             <div className="space-y-4">
               <div className="space-y-1">
-                <div className="flex items-center justify-between px-3 text-[10px] font-mono font-bold uppercase tracking-wider text-[#FFD400] mb-1">
-                  <span>TRAINER WORKSPACE</span>
-                  <ShieldCheck className="h-3.5 w-3.5" />
+                <div className="flex items-center justify-between px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                  <span>Trainer workspace</span>
+                  <ShieldCheck className="h-3.5 w-3.5 text-[#ffad8a]" />
                 </div>
                 {trainerWorkspaceItems.map((item) => {
                   const Icon = item.icon;
@@ -53,13 +52,13 @@ export function MobileNav() {
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={cn(
-                        'flex items-center gap-3 px-3 py-2 rounded-sm text-sm font-bold tracking-wide transition-colors',
+                        'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors',
                         isActive
-                          ? 'bg-[#FFD400]/10 text-foreground font-extrabold border-l-4 border-[#FFD400]'
-                          : 'text-muted-foreground hover:bg-surface-hover hover:text-foreground'
+                          ? 'bg-[#ffad8a]/15 text-[#ffad8a] font-semibold border-l-2 border-[#ffad8a] pl-2.5 shadow-sm shadow-[#ffad8a]/10'
+                          : 'text-muted-foreground hover:bg-[#ffad8a]/10 hover:text-foreground'
                       )}
                     >
-                      <Icon className="h-4 w-4 text-[#FFD400]" />
+                      <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-[#ffad8a]' : 'text-muted-foreground')} />
                       <span>{item.name}</span>
                     </Link>
                   );
@@ -67,8 +66,8 @@ export function MobileNav() {
               </div>
 
               <div className="pt-3 border-t border-border space-y-1">
-                <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-3 mb-1">
-                  ACCOUNT
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-1">
+                  Account
                 </div>
                 {trainerAccountItems.map((item) => {
                   const Icon = item.icon;
@@ -79,13 +78,13 @@ export function MobileNav() {
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={cn(
-                        'flex items-center gap-3 px-3 py-2 rounded-sm text-sm font-bold tracking-wide transition-colors',
+                        'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors',
                         isActive
-                          ? 'bg-[#FFD400]/10 text-foreground font-extrabold border-l-4 border-[#FFD400]'
-                          : 'text-muted-foreground hover:bg-surface-hover hover:text-foreground'
+                          ? 'bg-[#ffad8a]/15 text-[#ffad8a] font-semibold border-l-2 border-[#ffad8a] pl-2.5 shadow-sm shadow-[#ffad8a]/10'
+                          : 'text-muted-foreground hover:bg-[#ffad8a]/10 hover:text-foreground'
                       )}
                     >
-                      <Icon className="h-4 w-4 text-[#FFD400]" />
+                      <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-[#ffad8a]' : 'text-muted-foreground')} />
                       <span>{item.name}</span>
                     </Link>
                   );
@@ -96,8 +95,8 @@ export function MobileNav() {
             /* STUDENT PORTAL MOBILE NAV */
             <div className="space-y-4">
               <div className="space-y-1">
-                <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FFD400] px-3 mb-1">
-                  TRAINEE WORKSPACE
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-1">
+                  Trainee workspace
                 </div>
                 {studentWorkspaceItems.map((item) => {
                   const Icon = item.icon;
@@ -110,13 +109,13 @@ export function MobileNav() {
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={cn(
-                        'flex items-center gap-3 px-3 py-2 rounded-sm text-sm font-bold tracking-wide transition-colors',
+                        'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors',
                         isActive
-                          ? 'bg-[#FFD400]/10 text-foreground font-extrabold border-l-4 border-[#FFD400]'
-                          : 'text-muted-foreground hover:bg-surface-hover hover:text-foreground'
+                          ? 'bg-[#ffad8a]/15 text-[#ffad8a] font-semibold border-l-2 border-[#ffad8a] pl-2.5 shadow-sm shadow-[#ffad8a]/10'
+                          : 'text-muted-foreground hover:bg-[#ffad8a]/10 hover:text-foreground'
                       )}
                     >
-                      <Icon className="h-4 w-4 text-[#FFD400]" />
+                      <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-[#ffad8a]' : 'text-muted-foreground')} />
                       <span>{item.name}</span>
                     </Link>
                   );
@@ -124,8 +123,8 @@ export function MobileNav() {
               </div>
 
               <div className="pt-3 border-t border-border space-y-1">
-                <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground px-3 mb-1">
-                  ACCOUNT
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-1">
+                  Account
                 </div>
                 {studentAccountItems.map((item) => {
                   const Icon = item.icon;
@@ -136,13 +135,13 @@ export function MobileNav() {
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={cn(
-                        'flex items-center gap-3 px-3 py-2 rounded-sm text-sm font-bold tracking-wide transition-colors',
+                        'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors',
                         isActive
-                          ? 'bg-[#FFD400]/10 text-foreground font-extrabold border-l-4 border-[#FFD400]'
-                          : 'text-muted-foreground hover:bg-surface-hover hover:text-foreground'
+                          ? 'bg-[#ffad8a]/15 text-[#ffad8a] font-semibold border-l-2 border-[#ffad8a] pl-2.5 shadow-sm shadow-[#ffad8a]/10'
+                          : 'text-muted-foreground hover:bg-[#ffad8a]/10 hover:text-foreground'
                       )}
                     >
-                      <Icon className="h-4 w-4 text-[#FFD400]" />
+                      <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-[#ffad8a]' : 'text-muted-foreground')} />
                       <span>{item.name}</span>
                     </Link>
                   );
@@ -155,4 +154,5 @@ export function MobileNav() {
     </div>
   );
 }
+
 

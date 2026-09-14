@@ -1,41 +1,45 @@
 'use client';
 
-import { ThemeToggle } from './ThemeToggle';
+import { usePathname } from 'next/navigation';
 import { UserNav } from './UserNav';
 import { MobileNav } from './MobileNav';
 import { NotificationCenter } from './NotificationCenter';
-import { Zap } from 'lucide-react';
 import Link from 'next/link';
 
 export function Header() {
+  const pathname = usePathname();
+
+  // Generate clean page title from pathname
+  const pathSegments = pathname.split('/').filter(Boolean);
+  const rawTitle = pathSegments.length > 0
+    ? pathSegments[pathSegments.length - 1].replace(/-/g, ' ')
+    : 'Dashboard';
+
+  const formattedTitle = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1);
+
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-surface px-4 sm:px-8 transition-colors duration-200">
-      <div className="flex md:hidden items-center gap-2">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-sm bg-[#FFD400] flex items-center justify-center text-black font-bold">
-            <Zap className="h-4 w-4 fill-black text-black" />
-          </div>
-          <span className="font-bold text-lg uppercase tracking-wider text-foreground">
-            SKILLTRACK <span className="text-[#FFD400]">AI</span>
-          </span>
-        </Link>
-      </div>
-
-      <div className="hidden md:block">
-        <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-[#FFD400]">
-          CAREER READINESS PLATFORM
-        </h2>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <div className="hidden md:block">
-          <ThemeToggle />
-        </div>
-        <NotificationCenter />
-        <UserNav />
+    <header className="sticky top-0 z-30 flex items-center justify-between h-16 w-full bg-[#1c132b]/95 backdrop-blur-md border-b border-white/10 px-6 sm:px-8 transition-colors duration-150 select-none">
+      {/* Left Section: Mobile Nav & Page Title */}
+      <div className="flex items-center gap-4">
         <MobileNav />
+        <div className="flex items-center gap-2">
+          {pathSegments.length > 1 && (
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden sm:inline">
+              {pathSegments[0]} /
+            </span>
+          )}
+          <h1 className="font-extrabold text-base sm:text-lg text-foreground tracking-tight">
+            {formattedTitle}
+          </h1>
+        </div>
+      </div>
+
+      {/* Right Section: Notifications & User Profile */}
+      <div className="flex items-center gap-4 sm:gap-6">
+        <NotificationCenter />
+        <div className="h-5 w-px bg-white/10 hidden sm:block" />
+        <UserNav />
       </div>
     </header>
   );
 }
-

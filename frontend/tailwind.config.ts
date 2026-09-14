@@ -10,7 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', 'sans-serif'],
+        sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
       },
       colors: {
         background: 'var(--background)',
@@ -19,11 +19,6 @@ const config: Config = {
           DEFAULT: 'var(--surface)',
           secondary: 'var(--surface-secondary)',
           hover: 'var(--surface-hover)',
-        },
-        yellow: {
-          DEFAULT: '#FFD400',
-          hover: 'var(--primary-hover)',
-          glow: 'rgba(255, 212, 0, 0.4)',
         },
         card: {
           DEFAULT: 'var(--card)',
@@ -57,14 +52,18 @@ const config: Config = {
           foreground: 'var(--destructive-foreground)',
         },
         border: 'var(--border)',
-        'border-yellow': 'rgba(255, 212, 0, 0.35)',
         input: 'var(--input-border)',
         ring: 'var(--ring)',
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        error: 'var(--error)',
       },
       borderRadius: {
-        lg: '4px',
-        md: '2px',
-        sm: '1px',
+        '2xl': '18px',
+        xl: '14px',
+        lg: '10px',
+        md: '8px',
+        sm: '6px',
       },
       keyframes: {
         'accordion-down': {
@@ -75,15 +74,10 @@ const config: Config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        pulseGlow: {
-          '0%, 100%': { boxShadow: '0 0 15px rgba(255, 212, 0, 0.2)' },
-          '50%': { boxShadow: '0 0 25px rgba(255, 212, 0, 0.6)' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse-glow': 'pulseGlow 2s infinite ease-in-out',
       },
     },
   },
@@ -91,4 +85,5 @@ const config: Config = {
 };
 
 export default config;
+
 

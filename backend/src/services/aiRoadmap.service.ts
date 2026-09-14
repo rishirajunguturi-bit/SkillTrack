@@ -60,7 +60,7 @@ export class AiRoadmapService {
     }
 
     try {
-      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = this.genAI.getGenerativeModel({ model: env.GEMINI_MODEL || 'gemini-2.5-flash' });
 
       const promptData = {
         targetRole: roleName,

@@ -90,7 +90,7 @@ export class AiStudyPlanService {
     }
 
     try {
-      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = this.genAI.getGenerativeModel({ model: env.GEMINI_MODEL || 'gemini-2.5-flash' });
 
       // Generate 7 dates starting from today
       const startDate = new Date();

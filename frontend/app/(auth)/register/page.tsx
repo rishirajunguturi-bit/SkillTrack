@@ -15,6 +15,7 @@ import { CollegeSelect } from '@/components/ui/CollegeSelect';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import { getGraduationYearOptions } from '@/lib/yearUtils';
 
 const registerSchema = z
   .object({
@@ -25,7 +26,7 @@ const registerSchema = z
     college: z.string().min(2, 'College selection is required'),
     degree: z.string().min(1, 'Degree is required'),
     branch: z.string().min(1, 'Branch is required'),
-    graduationYear: z.coerce.number().min(2024, 'Graduation year must be 2024 or later'),
+    graduationYear: z.coerce.number().min(1990, 'Please select a valid graduation year').max(2100),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -66,51 +67,51 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 bg-background text-foreground relative transition-colors duration-200 selection:bg-[#FFD400] selection:text-black">
+    <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 bg-background text-foreground relative transition-colors duration-150">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
 
       <div className="w-full max-w-lg space-y-6">
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center gap-2.5 mb-2 group">
-            <div className="h-10 w-10 rounded-sm bg-[#FFD400] flex items-center justify-center text-black shadow-md font-bold">
-              <Zap className="h-5 w-5 fill-black text-black" />
+          <Link href="/" className="inline-flex items-center gap-2 mb-3">
+            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-xs">
+              <Zap className="h-4 w-4 fill-white text-white" />
             </div>
-            <span className="font-bold text-3xl uppercase tracking-wider text-foreground">
-              SKILLTRACK <span className="text-[#FFD400]">AI</span>
+            <span className="font-bold text-2xl tracking-tight text-foreground">
+              SkillTrack <span className="text-primary">AI</span>
             </span>
           </Link>
-          <h2 className="mt-3 font-extrabold text-2xl uppercase tracking-wider text-foreground">
-            CREATE YOUR STUDENT ACCOUNT
-          </h2>
-          <p className="text-xs text-muted-foreground mt-1 font-sans">
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Create your account
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Start identifying skill gaps and building placement readiness.
           </p>
         </div>
 
-        <Card className="border border-border bg-card rounded-sm shadow-2xl">
+        <Card className="border border-border bg-card rounded-xl shadow-xs">
           <CardContent className="pt-6 space-y-5">
             {/* Google Auth Button */}
             <GoogleAuthButton />
 
             <div className="relative flex items-center justify-center">
               <div className="w-full border-t border-border" />
-              <span className="bg-card px-3 text-[10px] text-muted-foreground font-mono font-bold uppercase relative">
-                OR REGISTER WITH EMAIL
+              <span className="bg-card px-3 text-xs text-muted-foreground relative">
+                or register with email
               </span>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <Input
-                label="Full Name"
+                label="Full name"
                 placeholder="e.g. Sarthak Sharma"
                 {...register('name')}
                 error={errors.name?.message}
               />
 
               <Input
-                label="College / University Email"
+                label="College / university email"
                 type="email"
                 placeholder="sarthak@college.edu"
                 {...register('email')}
@@ -126,7 +127,7 @@ export default function RegisterPage() {
                   error={errors.password?.message}
                 />
                 <Input
-                  label="Confirm Password"
+                  label="Confirm password"
                   type="password"
                   placeholder="••••••••"
                   {...register('confirmPassword')}
@@ -140,7 +141,7 @@ export default function RegisterPage() {
                 control={control}
                 render={({ field }) => (
                   <CollegeSelect
-                    label="College / University Name"
+                    label="College / university name"
                     value={field.value}
                     onChange={field.onChange}
                     error={errors.college?.message}
@@ -164,21 +165,15 @@ export default function RegisterPage() {
                 />
 
                 <Select
-                  label="Graduation Year"
-                  options={[
-                    { label: '2024', value: 2024 },
-                    { label: '2025', value: 2025 },
-                    { label: '2026', value: 2026 },
-                    { label: '2027', value: 2027 },
-                    { label: '2028', value: 2028 },
-                  ]}
+                  label="Graduation year"
+                  options={getGraduationYearOptions()}
                   {...register('graduationYear')}
                   error={errors.graduationYear?.message}
                 />
               </div>
 
               <Select
-                label="Branch / Major"
+                label="Branch / major"
                 options={[
                   { label: 'Computer Science & Engineering', value: 'Computer Science & Engineering' },
                   { label: 'Information Technology', value: 'Information Technology' },
@@ -192,18 +187,18 @@ export default function RegisterPage() {
                 error={errors.branch?.message}
               />
 
-              <Button type="submit" size="lg" variant="primary" className="w-full gap-2 mt-2 font-bold uppercase" isLoading={isLoading}>
-                CREATE ACCOUNT & CONTINUE
-                <ArrowRight className="h-4 w-4 text-black" />
+              <Button type="submit" size="lg" variant="primary" className="w-full gap-2 mt-2" isLoading={isLoading}>
+                Create account
+                <ArrowRight className="h-4 w-4 text-white" />
               </Button>
             </form>
           </CardContent>
 
-          <CardFooter className="flex justify-center border-t border-border py-4 bg-surface-secondary rounded-b-sm">
-            <p className="text-xs text-muted-foreground font-sans">
+          <CardFooter className="flex justify-center border-t border-border py-4 bg-surface-secondary/50 rounded-b-xl">
+            <p className="text-xs text-muted-foreground">
               Already have an account?{' '}
-              <Link href="/login" className="font-bold text-[#FFD400] hover:underline">
-                Sign in here
+              <Link href="/login" className="font-medium text-primary hover:underline">
+                Sign in
               </Link>
             </p>
           </CardFooter>
@@ -212,4 +207,5 @@ export default function RegisterPage() {
     </div>
   );
 }
+
 

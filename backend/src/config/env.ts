@@ -10,6 +10,8 @@ export const env = {
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:3000',
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+  GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+  AI_DAILY_REQUEST_LIMIT: parseInt(process.env.AI_DAILY_REQUEST_LIMIT || '20', 10),
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || '',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || '',
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',

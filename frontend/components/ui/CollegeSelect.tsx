@@ -177,7 +177,7 @@ export function CollegeSelect({
   return (
     <div className={cn('space-y-1.5 relative', className)} ref={containerRef} onKeyDown={handleKeyDown}>
       {label && (
-        <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+        <label className="block text-sm font-medium text-foreground">
           {label}
         </label>
       )}
@@ -192,21 +192,21 @@ export function CollegeSelect({
         }}
         tabIndex={disabled ? -1 : 0}
         className={cn(
-          'flex items-center justify-between w-full h-11 px-3.5 rounded-sm border text-sm transition-all cursor-pointer select-none bg-[#0A0A0A] focus:outline-none',
+          'flex items-center justify-between w-full h-10 px-3.5 rounded-md border text-sm transition-all cursor-pointer select-none bg-surface focus:outline-none',
           error
-            ? 'border-rose-500 focus:ring-1 focus:ring-rose-500'
+            ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
             : isOpen
-            ? 'border-[#FFD400] ring-1 ring-[#FFD400]'
-            : 'border-white/15 hover:border-white/30',
-          disabled && 'opacity-40 cursor-not-allowed bg-[#111111]'
+            ? 'border-primary ring-2 ring-primary/20'
+            : 'border-border hover:border-muted-foreground/30',
+          disabled && 'opacity-50 cursor-not-allowed bg-surface-secondary'
         )}
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
-          <Building2 className="h-4 w-4 text-[#FFD400] shrink-0" />
+          <Building2 className="h-4 w-4 text-primary shrink-0" />
           <span
             className={cn(
-              'truncate font-medium',
-              value ? 'text-white font-bold' : 'text-zinc-500'
+              'truncate font-normal',
+              value ? 'text-foreground font-semibold' : 'text-muted-foreground'
             )}
           >
             {value || placeholder}
@@ -218,7 +218,7 @@ export function CollegeSelect({
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 rounded-sm text-zinc-400 hover:text-white hover:bg-[#171717] transition-colors"
+              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-secondary transition-colors"
               title="Clear selection"
             >
               <X className="h-3.5 w-3.5" />
@@ -226,22 +226,22 @@ export function CollegeSelect({
           )}
           <ChevronDown
             className={cn(
-              'h-4 w-4 text-zinc-400 transition-transform duration-200',
-              isOpen && 'transform rotate-180 text-[#FFD400]'
+              'h-4 w-4 text-muted-foreground transition-transform duration-200',
+              isOpen && 'transform rotate-180 text-primary'
             )}
           />
         </div>
       </div>
 
-      {error && <p className="text-xs text-rose-400 font-semibold">{error}</p>}
+      {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
 
       {/* Searchable Dropdown Popup */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-[#0A0A0A] border border-white/15 rounded-sm shadow-2xl overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
+        <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in-50 zoom-in-95 duration-150">
           {/* Search & State Filter Bar Input */}
-          <div className="p-2.5 border-b border-white/10 bg-[#111111] space-y-2">
+          <div className="p-2.5 border-b border-border bg-surface-secondary/50 space-y-2">
             <div className="relative flex items-center">
-              <Search className="h-4 w-4 text-zinc-400 absolute left-3" />
+              <Search className="h-4 w-4 text-muted-foreground absolute left-3" />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -251,13 +251,13 @@ export function CollegeSelect({
                   setHighlightedIndex(0);
                 }}
                 placeholder="Search engineering college (e.g. Prasad, IIT, PVPSIT)..."
-                className="w-full h-9 pl-9 pr-8 text-xs bg-[#0A0A0A] border border-white/15 rounded-sm focus:outline-none focus:border-[#FFD400] focus:ring-1 focus:ring-[#FFD400] text-white placeholder:text-zinc-500"
+                className="w-full h-9 pl-9 pr-8 text-xs bg-surface border border-border rounded-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 text-zinc-400 hover:text-white"
+                  className="absolute right-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -265,17 +265,17 @@ export function CollegeSelect({
             </div>
 
             {/* Quick State Filter Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] scrollbar-none">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
               {indianStates.map((st) => (
                 <button
                   key={st}
                   type="button"
                   onClick={() => setSelectedStateFilter(st === 'All States' ? '' : st)}
                   className={cn(
-                    'px-2 py-0.5 rounded-sm shrink-0 font-bold uppercase transition-colors',
+                    'px-2.5 py-0.5 rounded-full shrink-0 font-medium transition-colors text-xs',
                     (st === 'All States' && !selectedStateFilter) || selectedStateFilter === st
-                      ? 'bg-[#FFD400] text-black'
-                      : 'bg-[#171717] text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                      ? 'bg-primary text-white'
+                      : 'bg-surface text-muted-foreground hover:bg-surface-secondary border border-border'
                   )}
                 >
                   {st}
@@ -287,17 +287,17 @@ export function CollegeSelect({
           {/* College Options List */}
           <div className="max-h-64 overflow-y-auto p-1 space-y-0.5 text-xs">
             {isLoading ? (
-              <div className="flex items-center justify-center py-6 gap-2 text-xs text-zinc-400 font-medium">
-                <RefreshCw className="h-4 w-4 animate-spin text-[#FFD400]" />
+              <div className="flex items-center justify-center py-6 gap-2 text-xs text-muted-foreground font-medium">
+                <RefreshCw className="h-4 w-4 animate-spin text-primary" />
                 <span>Searching colleges...</span>
               </div>
             ) : isError ? (
-              <div className="text-center py-5 space-y-2 text-rose-400 text-xs">
+              <div className="text-center py-5 space-y-2 text-red-500 text-xs">
                 <p>Unable to load colleges.</p>
                 <button
                   type="button"
                   onClick={() => refetch()}
-                  className="px-3 py-1 rounded-sm border border-rose-500/30 text-rose-400 font-semibold hover:bg-rose-950/50"
+                  className="px-3 py-1 rounded-md border border-red-200 text-red-600 font-medium hover:bg-red-50"
                 >
                   Retry
                 </button>
@@ -313,23 +313,23 @@ export function CollegeSelect({
                     onClick={() => handleSelect(c)}
                     onMouseEnter={() => setHighlightedIndex(index)}
                     className={cn(
-                      'w-full text-left px-3 py-2.5 rounded-sm flex flex-col gap-0.5 transition-colors',
+                      'w-full text-left px-3 py-2.5 rounded-md flex flex-col gap-0.5 transition-colors',
                       isSelected
-                        ? 'bg-[#FFD400]/10 text-[#FFD400] font-bold border-l-2 border-[#FFD400]'
+                        ? 'bg-[#ffad8a]/15 text-[#ffad8a] font-bold border-l-2 border-[#ffad8a] rounded-xl'
                         : isHighlighted
-                        ? 'bg-[#171717] text-white font-semibold'
-                        : 'text-zinc-300 hover:bg-[#171717]'
+                        ? 'bg-[#281a3a] text-foreground font-medium'
+                        : 'text-foreground hover:bg-[#281a3a]/60'
                     )}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="truncate pr-2 font-bold">{c.name}</span>
-                      {isSelected && <Check className="h-3.5 w-3.5 text-[#FFD400] shrink-0" />}
+                      <span className="truncate pr-2 font-medium">{c.name}</span>
+                      {isSelected && <Check className="h-3.5 w-3.5 text-primary shrink-0" />}
                     </div>
-                    <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 font-normal">
-                      <MapPin className="h-3 w-3 text-zinc-500 shrink-0" />
+                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-normal">
+                      <MapPin className="h-3 w-3 text-muted-foreground shrink-0" />
                       <span>{c.city}, {c.state}</span>
                       {c.type && (
-                        <span className="px-1.5 py-0.2 rounded-sm bg-[#171717] text-[#FFD400] font-mono font-semibold uppercase">
+                        <span className="px-1.5 py-0.2 rounded-full bg-surface-secondary text-muted-foreground font-medium text-[10px]">
                           {c.type}
                         </span>
                       )}
@@ -338,8 +338,8 @@ export function CollegeSelect({
                 );
               })
             ) : (
-              <div className="text-center py-6 space-y-2 text-zinc-400 text-xs">
-                <p className="font-semibold text-white">No engineering colleges found.</p>
+              <div className="text-center py-6 space-y-2 text-muted-foreground text-xs">
+                <p className="font-medium text-foreground">No engineering colleges found.</p>
                 <p className="text-[11px]">Try another search term or state filter.</p>
                 <button
                   type="button"
@@ -348,10 +348,10 @@ export function CollegeSelect({
                     setIsRequestOpen(true);
                     setIsOpen(false);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-[#FFD400] text-black font-bold uppercase hover:bg-[#FFE033]"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-white font-medium hover:bg-primary-hover"
                 >
                   <PlusCircle className="h-3.5 w-3.5" />
-                  Request Addition
+                  Request addition
                 </button>
               </div>
             )}
@@ -363,16 +363,16 @@ export function CollegeSelect({
       <Dialog open={isRequestOpen} onOpenChange={setIsRequestOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Request College Addition</DialogTitle>
+            <DialogTitle>Request college addition</DialogTitle>
             <DialogDescription>
               If your engineering institution is not listed, submit a request for administrator verification.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3 py-2 text-xs">
-            <Input label="Your Name" placeholder="Sarthak Sharma" value={reqStudentName} onChange={(e) => setReqStudentName(e.target.value)} />
-            <Input label="Your Email" type="email" placeholder="student@college.edu" value={reqStudentEmail} onChange={(e) => setReqStudentEmail(e.target.value)} />
-            <Input label="College Full Name" placeholder="e.g. Prasad V. Potluri Siddhartha Institute of Technology" value={reqCollegeName} onChange={(e) => setReqCollegeName(e.target.value)} />
+            <Input label="Your name" placeholder="Sarthak Sharma" value={reqStudentName} onChange={(e) => setReqStudentName(e.target.value)} />
+            <Input label="Your email" type="email" placeholder="student@college.edu" value={reqStudentEmail} onChange={(e) => setReqStudentEmail(e.target.value)} />
+            <Input label="College full name" placeholder="e.g. Prasad V. Potluri Siddhartha Institute of Technology" value={reqCollegeName} onChange={(e) => setReqCollegeName(e.target.value)} />
             <div className="grid grid-cols-2 gap-3">
               <Input label="City" placeholder="Vijayawada" value={reqCity} onChange={(e) => setReqCity(e.target.value)} />
               <Input label="State" placeholder="Andhra Pradesh" value={reqState} onChange={(e) => setReqState(e.target.value)} />
@@ -388,7 +388,7 @@ export function CollegeSelect({
               isLoading={requestCollegeMutation.isPending}
               disabled={!reqCollegeName || !reqCity || !reqStudentEmail}
             >
-              Submit Addition Request
+              Submit request
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -396,3 +396,4 @@ export function CollegeSelect({
     </div>
   );
 }
+

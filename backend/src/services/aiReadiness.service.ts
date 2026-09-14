@@ -55,7 +55,7 @@ export class AiReadinessService {
     }
 
     try {
-      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = this.genAI.getGenerativeModel({ model: env.GEMINI_MODEL || 'gemini-2.5-flash' });
       const prompt = `You are a senior technical career coach evaluating a student's placement readiness metrics.
 Student Readiness Snapshot:
 - Target Career Role: ${data.careerRoleName}

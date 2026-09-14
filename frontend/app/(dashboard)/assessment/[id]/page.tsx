@@ -39,7 +39,7 @@ export default function AssessmentStartConfigPage() {
   if (isLoading) {
     return (
       <PageWrapper className="max-w-3xl mx-auto space-y-6">
-        <Skeleton className="h-64 w-full rounded-sm bg-[#0A0A0A]" />
+        <Skeleton className="h-64 w-full rounded-xl bg-surface-secondary" />
       </PageWrapper>
     );
   }
@@ -49,64 +49,64 @@ export default function AssessmentStartConfigPage() {
 
   return (
     <PageWrapper className="max-w-3xl mx-auto space-y-6">
-      <Card className="overflow-hidden rounded-sm">
-        <div className="bg-surface-secondary p-6 sm:p-8 space-y-2 border-b border-border">
-          <Badge variant="default" className="bg-[#FFD400]/10 text-[#FFD400] border-[#FFD400]/40 font-mono font-bold text-xs uppercase">
-            {skill.category || 'Skill Assessment'}
+      <Card className="overflow-hidden rounded-xl">
+        <div className="bg-surface-secondary/50 p-6 sm:p-8 space-y-2 border-b border-border">
+          <Badge variant="blue" className="text-xs">
+            {skill.category || 'Skill assessment'}
           </Badge>
-          <h1 className="text-3xl sm:text-4xl font-extrabold uppercase text-card-foreground tracking-tight">{assessment?.title}</h1>
-          <p className="text-muted-foreground text-xs sm:text-sm font-sans">{assessment?.description || `Evaluate your proficiency in ${skill.name || 'this skill'}.`}</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">{assessment?.title}</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm">{assessment?.description || `Evaluate your proficiency in ${skill.name || 'this skill'}.`}</p>
         </div>
 
         <CardContent className="p-6 sm:p-8 space-y-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-sm bg-surface-secondary border border-border text-center font-mono">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-surface border border-border text-center">
             <div>
-              <span className="text-[10px] text-muted-foreground block font-bold uppercase">Questions</span>
-              <strong className="text-xl font-extrabold text-[#FFD400]">
-                20 Questions
+              <span className="text-xs text-muted-foreground block font-medium">Questions</span>
+              <strong className="text-lg font-bold text-primary">
+                20 questions
               </strong>
             </div>
             <div>
-              <span className="text-[10px] text-muted-foreground block font-bold uppercase">Time Limit</span>
-              <strong className="text-xl font-extrabold text-card-foreground flex items-center justify-center gap-1">
+              <span className="text-xs text-muted-foreground block font-medium">Time limit</span>
+              <strong className="text-lg font-bold text-foreground flex items-center justify-center gap-1">
                 <Clock className="h-4 w-4 text-muted-foreground" />
-                {assessment?.timeLimit || 20} Mins
+                {assessment?.timeLimit || 20} mins
               </strong>
             </div>
             <div>
-              <span className="text-[10px] text-muted-foreground block font-bold uppercase">Passing Score</span>
-              <strong className="text-xl font-extrabold text-card-foreground">
+              <span className="text-xs text-muted-foreground block font-medium">Passing score</span>
+              <strong className="text-lg font-bold text-foreground">
                 {assessment?.passingScore || 60}%
               </strong>
             </div>
             <div>
-              <span className="text-[10px] text-muted-foreground block font-bold uppercase">Difficulty</span>
-              <strong className="text-xl font-extrabold text-card-foreground uppercase">
-                {assessment?.difficulty || 'MIXED'}
+              <span className="text-xs text-muted-foreground block font-medium">Difficulty</span>
+              <strong className="text-lg font-bold text-foreground">
+                {assessment?.difficulty || 'Mixed'}
               </strong>
             </div>
           </div>
 
-          <div className="space-y-3 font-sans">
-            <h3 className="text-base font-bold text-card-foreground uppercase flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-[#FFD400]" />
-              ASSESSMENT GUIDELINES & RULES:
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              Assessment guidelines & rules
             </h3>
-            <ul className="space-y-2 text-xs text-muted-foreground font-mono">
+            <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex items-start gap-2">
-                <span className="text-[#FFD400] font-bold">•</span>
-                <span>The assessment contains <strong className="text-card-foreground">exactly 20 conceptual multiple-choice questions</strong>.</span>
+                <span className="text-primary font-bold">•</span>
+                <span>The assessment contains <strong className="text-foreground">exactly 20 conceptual multiple-choice questions</strong>.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#FFD400] font-bold">•</span>
-                <span>You have <strong className="text-card-foreground">{assessment?.timeLimit || 20} minutes</strong> to complete all 20 questions.</span>
+                <span className="text-primary font-bold">•</span>
+                <span>You have <strong className="text-foreground">{assessment?.timeLimit || 20} minutes</strong> to complete all 20 questions.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#FFD400] font-bold">•</span>
+                <span className="text-primary font-bold">•</span>
                 <span>Unanswered questions upon timer expiry will be evaluated as incorrect.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#FFD400] font-bold">•</span>
+                <span className="text-primary font-bold">•</span>
                 <span>Retaking the assessment will serve a new randomized 20-question combination.</span>
               </li>
             </ul>
@@ -117,10 +117,10 @@ export default function AssessmentStartConfigPage() {
               onClick={() => startMutation.mutate()}
               isLoading={startMutation.isPending}
               variant="primary"
-              className="gap-2 font-bold text-xs uppercase px-6"
+              className="gap-2 text-xs px-6"
             >
-              Start 20-Question Assessment Now
-              <ArrowRight className="h-4 w-4 text-black" />
+              Start assessment now
+              <ArrowRight className="h-4 w-4 text-white" />
             </Button>
           </div>
         </CardContent>
@@ -128,4 +128,5 @@ export default function AssessmentStartConfigPage() {
     </PageWrapper>
   );
 }
+
 

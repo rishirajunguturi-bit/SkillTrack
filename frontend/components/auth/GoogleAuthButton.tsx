@@ -50,7 +50,7 @@ export function GoogleAuthButton() {
         type="button"
         variant="secondary"
         onClick={handleUnconfiguredClick}
-        className="w-full flex items-center justify-center gap-3 h-11 text-xs uppercase font-bold"
+        className="w-full flex items-center justify-center gap-3 h-10 text-sm font-medium"
       >
         <svg className="h-4 w-4" viewBox="0 0 24 24">
           <path

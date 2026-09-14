@@ -61,6 +61,23 @@ export class EmailService {
   }
 
   /**
+   * Verifies SMTP connection safely on server startup (Phase 9)
+   */
+  async verifySmtpConnection(): Promise<boolean> {
+    try {
+      const transporter = await this.getTransporter();
+      if (transporter) {
+        await transporter.verify();
+        console.log(`[EmailService] SMTP connection verified successfully.`);
+        return true;
+      }
+    } catch (err: any) {
+      console.warn(`[EmailService WARNING] SMTP connection verification failed:`, err?.message || err);
+    }
+    return false;
+  }
+
+  /**
    * Resend HTTPS REST API dispatch strategy.
    * Uses standard HTTPS over port 443, bypassing socket firewall restrictions and IPv6 routing errors.
    */
@@ -85,15 +102,19 @@ export class EmailService {
       const data = (await response.json()) as any;
 
       if (response.ok && data?.id) {
-        console.log(`[EmailService] Delivered email to ${options.to} via Resend HTTP API (ID: ${data.id})`);
+        console.log(`[EMAIL] Resend HTTP API accepted delivery to ${options.to} (ID: ${data.id})`);
         return { success: true, messageId: data.id };
       } else {
         const errorMessage = data?.message || data?.name || `Resend HTTP API status ${response.status}`;
-        console.error(`[EmailService] Resend HTTP API error for ${options.to}:`, errorMessage);
+        if (errorMessage.includes('testing emails to your own email address')) {
+          console.warn(`[EMAIL WARNING] Resend testing domain restricted delivery for recipient ${options.to}. Verify custom domain in Resend or configure standard SMTP in backend/.env.`);
+        } else {
+          console.error(`[EMAIL ERROR] Resend HTTP API rejected email for ${options.to}:`, errorMessage);
+        }
         return { success: false, error: errorMessage };
       }
     } catch (err: any) {
-      console.error(`[EmailService] Resend HTTP API fetch failed for ${options.to}:`, err.message || err);
+      console.error(`[EMAIL ERROR] Resend HTTP API fetch failed for ${options.to}:`, err.message || err);
       return { success: false, error: err.message || 'Resend HTTP API request failed' };
     }
   }
@@ -119,13 +140,13 @@ export class EmailService {
         <style>
           body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f5; margin: 0; padding: 20px; color: #18181b; }
           .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e4e4e7; }
-          .header { background: linear-gradient(135deg, #4f46e5 0%, #020617 100%); padding: 32px 24px; text-align: center; color: #ffffff; }
+          .header { background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); padding: 32px 24px; text-align: center; color: #ffffff; }
           .header h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
           .header p { margin: 6px 0 0; font-size: 13px; opacity: 0.9; }
           .content { padding: 32px 28px; line-height: 1.6; font-size: 14px; }
-          .btn { display: inline-block; background-color: #4f46e5; color: #ffffff !important; font-weight: 700; text-decoration: none; padding: 12px 28px; border-radius: 10px; margin: 20px 0; font-size: 14px; text-align: center; }
+          .btn { display: inline-block; background-color: #1e3a8a; color: #ffffff !important; font-weight: 700; text-decoration: none; padding: 12px 28px; border-radius: 8px; margin: 20px 0; font-size: 14px; text-align: center; }
           .footer { background-color: #fafafa; padding: 20px 24px; text-align: center; font-size: 12px; color: #71717a; border-top: 1px solid #f4f4f5; }
-          .badge { display: inline-block; padding: 4px 10px; background: #e0e7ff; color: #3730a3; font-weight: 700; border-radius: 20px; font-size: 12px; }
+          .badge { display: inline-block; padding: 4px 10px; background: #dbeafe; color: #1e3a8a; font-weight: 700; border-radius: 20px; font-size: 12px; }
           .message-box { background: #fafafa; border: 1px solid #e4e4e7; border-radius: 12px; padding: 18px; margin: 16px 0; white-space: pre-wrap; word-break: break-word; }
         </style>
       </head>
@@ -133,7 +154,7 @@ export class EmailService {
         <div class="container">
           <div class="header">
             <h1>SkillTrack AI</h1>
-            <p>Engineering Skill Assessment & Placement Readiness Platform</p>
+            <p>Government Skilling Outcome & Impact Intelligence Platform</p>
           </div>
           <div class="content">
             ${bodyContent}
@@ -152,41 +173,64 @@ export class EmailService {
    * Executes low-level email dispatch using Resend HTTP API (Primary) with Nodemailer SMTP fallback.
    */
   async executeSendMail(options: SendMailOptions): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    // Phase 4: Validate recipient email format before attempting transport
+    if (!options.to || typeof options.to !== 'string' || !options.to.trim()) {
+      console.warn(`[EMAIL ERROR] Invalid or missing recipient email address: "${options.to}"`);
+      return { success: false, error: 'Invalid or missing recipient email address' };
+    }
+
+    const recipient = options.to.trim().toLowerCase();
+
+    // Basic email format validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(recipient)) {
+      console.warn(`[EMAIL ERROR] Recipient email failed format validation: "${recipient}"`);
+      return { success: false, error: 'Malformed recipient email address' };
+    }
+
+    const mailOptions: SendMailOptions = {
+      ...options,
+      to: recipient,
+    };
+
+    console.log(`[EMAIL] Dispatching email to recipient: ${recipient} | Subject: ${mailOptions.subject}`);
+
     const apiKey = env.RESEND_API_KEY || (env.SMTP_PASS?.startsWith('re_') ? env.SMTP_PASS : '');
 
     // 1. Primary Strategy: Resend HTTPS REST API (100% reliable on Render/Vercel)
     if (apiKey) {
-      const resendResult = await this.sendViaResendHttpApi(options, apiKey);
+      const resendResult = await this.sendViaResendHttpApi(mailOptions, apiKey);
       if (resendResult.success) {
         return resendResult;
       }
-      console.warn(`[EmailService] Resend HTTP API dispatch failed. Attempting Nodemailer SMTP fallback...`);
+      console.warn(`[EMAIL] Resend HTTP API dispatch failed. Attempting Nodemailer SMTP fallback...`);
     }
 
     // 2. Secondary Strategy: Nodemailer SMTP with forced IPv4
     try {
       const transporter = await this.getTransporter();
       if (!transporter) {
+        console.error(`[EMAIL ERROR] Mail transporter unavailable for recipient ${recipient}`);
         return { success: false, error: 'Mail transporter unavailable' };
       }
 
       const info = await transporter.sendMail({
         from: env.EMAIL_FROM || 'SkillTrack AI <onboarding@resend.dev>',
-        to: options.to,
-        subject: options.subject,
-        html: options.html,
-        text: options.text || options.subject,
+        to: recipient,
+        subject: mailOptions.subject,
+        html: mailOptions.html,
+        text: mailOptions.text || mailOptions.subject,
       });
 
-      console.log(`[EmailService] Email dispatched via SMTP to ${options.to} (MsgID: ${info.messageId})`);
+      console.log(`[EMAIL] SMTP accepted — Email dispatched to ${recipient} (MsgID: ${info.messageId})`);
       const previewUrl = nodemailer.getTestMessageUrl(info);
       if (previewUrl) {
-        console.log(`[EmailService Sandbox Preview Link]: ${previewUrl}`);
+        console.log(`[EMAIL Sandbox Preview Link]: ${previewUrl}`);
       }
 
       return { success: true, messageId: info.messageId };
     } catch (err: any) {
-      console.error(`[EmailService Error] Failed to send email to ${options.to}:`, err.message || err);
+      console.error(`[EMAIL ERROR] Failed to send email via SMTP to ${recipient}:`, err.message || err);
       return { success: false, error: err.message || 'Unknown email transport failure' };
     }
   }

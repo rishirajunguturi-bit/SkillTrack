@@ -38,7 +38,7 @@ export function CareerStatusSelector({
     },
     {
       id: 'SEEKING_EMPLOYMENT',
-      label: 'Seeking Employment',
+      label: 'Seeking employment',
       description: 'Actively preparing and applying for target job roles.',
       icon: Search,
     },
@@ -50,7 +50,7 @@ export function CareerStatusSelector({
     },
     {
       id: 'SELF_EMPLOYED',
-      label: 'Self-Employed',
+      label: 'Self-employed',
       description: 'Freelancing, startup founder, or independent business owner.',
       icon: Building,
     },
@@ -62,7 +62,7 @@ export function CareerStatusSelector({
     },
     {
       id: 'HIGHER_STUDIES',
-      label: 'Higher Studies',
+      label: 'Higher studies',
       description: 'Enrolled in post-graduate degree or specialized courses.',
       icon: GraduationCap,
     },
@@ -72,16 +72,16 @@ export function CareerStatusSelector({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-extrabold text-xl uppercase tracking-wider text-foreground flex items-center gap-2">
-            CURRENT CAREER STATUS
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+            Current career status
           </h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground mt-0.5">
             Select your current status to unlock relevant career tools and forms.
           </p>
         </div>
         {isSaving && (
-          <Badge variant="secondary" className="animate-pulse text-xs font-mono font-bold uppercase text-[#FFD400] bg-[#FFD400]/10 border border-[#FFD400]/40">
-            Updating Status...
+          <Badge variant="warning" className="animate-pulse text-xs bg-[#ffad8a]/20 text-[#ffad8a] border-[#ffad8a]/30">
+            Updating status...
           </Badge>
         )}
       </div>
@@ -94,30 +94,30 @@ export function CareerStatusSelector({
             <Card
               key={item.id}
               onClick={() => onStatusChange(item.id)}
-              className={`p-4 cursor-pointer transition-all border rounded-sm relative overflow-hidden ${
+              className={`p-4 cursor-pointer transition-all duration-150 border rounded-2xl relative overflow-hidden ${
                 isSelected
-                  ? 'border-[#FFD400] bg-[#FFD400]/10 shadow-lg'
-                  : 'border-border hover:border-[#FFD400]/40 bg-card text-card-foreground'
+                  ? 'border-[#ffad8a] bg-[#ffad8a]/15 shadow-md shadow-[#ffad8a]/10 ring-1 ring-[#ffad8a]/30 text-foreground'
+                  : 'border-border hover:border-[#ffad8a]/40 bg-[#1c132b] text-foreground'
               }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`p-2.5 rounded-sm font-bold ${
+                    className={`p-2.5 rounded-xl font-bold transition-colors ${
                       isSelected
-                        ? 'bg-[#FFD400] text-black'
-                        : 'bg-surface-secondary text-foreground'
+                        ? 'bg-[#ffad8a] text-[#2b1120]'
+                        : 'bg-[#281a3a] text-foreground'
                     }`}
                   >
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-base uppercase text-card-foreground tracking-wide">
+                    <h3 className="font-extrabold text-base text-foreground">
                       {item.label}
                     </h3>
                   </div>
                 </div>
-                {isSelected && <CheckCircle2 className="h-5 w-5 text-[#FFD400] shrink-0" />}
+                {isSelected && <CheckCircle2 className="h-5 w-5 text-[#ffad8a] shrink-0" />}
               </div>
               <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{item.description}</p>
             </Card>
@@ -127,4 +127,5 @@ export function CareerStatusSelector({
     </div>
   );
 }
+
 

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans bg-background text-foreground transition-colors duration-200 antialiased selection:bg-[#FFD400] selection:text-black`}>
+      <body className={`${inter.variable} font-sans bg-background text-foreground transition-colors duration-200 antialiased selection:bg-[#ffad8a]/30 selection:text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true}>
           <ReactQueryProvider>
             <AuthProvider>
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 toastOptions={{
                   style: {
                     background: 'var(--surface)',
-                    border: '1px solid rgba(255, 212, 0, 0.35)',
+                    border: '1px solid rgba(255, 173, 138, 0.35)',
                     color: 'var(--foreground)',
                   },
                 }}

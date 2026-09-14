@@ -9,24 +9,24 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'default', size = 'default', isLoading, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center whitespace-nowrap rounded-sm text-sm font-bold tracking-normal transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD400] disabled:pointer-events-none disabled:opacity-40 active:scale-[0.98] duration-150';
+    const baseStyles = 'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffad8a]/30 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]';
 
     const variants = {
-      default: 'bg-[#FFD400] text-[#000000] font-bold border-none hover:bg-[#E6BF00] hover:text-[#000000]',
-      primary: 'bg-[#FFD400] text-[#000000] font-bold border-none hover:bg-[#E6BF00] hover:text-[#000000]',
-      secondary: 'bg-white dark:bg-[#111111] text-[#111111] dark:text-white border border-[#D4D4D4] dark:border-[#444444] hover:bg-[#F3F3F3] hover:text-[#000000] dark:hover:bg-[#1A1A1A] dark:hover:text-white',
-      outline: 'bg-transparent text-[#111111] dark:text-white border border-[#D4D4D4] dark:border-[#444444] hover:bg-[#F3F3F3] hover:text-[#000000] dark:hover:bg-[#1A1A1A] dark:hover:text-white',
-      ghost: 'bg-transparent text-[#111111] dark:text-white hover:bg-[#F3F3F3] hover:text-[#000000] dark:hover:bg-[#1A1A1A] dark:hover:text-white',
-      destructive: 'bg-rose-600 text-white font-bold border-none hover:bg-rose-700',
-      danger: 'bg-rose-600 text-white font-bold border-none hover:bg-rose-700',
-      success: 'bg-emerald-600 text-white font-bold border-none hover:bg-emerald-700',
-      link: 'text-[#FFD400] underline-offset-4 hover:underline p-0 h-auto font-bold',
+      default: 'bg-[#ffad8a] text-[#2b1120] hover:bg-[#ff9970] hover:-translate-y-0.5 hover:shadow-md hover:shadow-[#ffad8a]/10',
+      primary: 'bg-[#ffad8a] text-[#2b1120] hover:bg-[#ff9970] hover:-translate-y-0.5 hover:shadow-md hover:shadow-[#ffad8a]/10',
+      secondary: 'bg-[#281a3a]/60 text-[#fff9fc] border border-white/20 hover:bg-[#34224b] hover:border-white/40 hover:-translate-y-0.5',
+      outline: 'bg-transparent text-[#fff9fc] border border-white/20 hover:bg-[#281a3a]/50 hover:border-white/40 hover:-translate-y-0.5',
+      ghost: 'bg-transparent text-[#c5b6c6] hover:text-[#fff9fc] hover:bg-[#281a3a]/50',
+      destructive: 'bg-[#ef7489] text-white hover:bg-[#e0566d] hover:-translate-y-0.5',
+      danger: 'bg-[#ef7489] text-white hover:bg-[#e0566d] hover:-translate-y-0.5',
+      success: 'bg-[#15803D] text-white hover:bg-[#166534] hover:-translate-y-0.5',
+      link: 'text-[#ffad8a] underline-offset-4 hover:underline p-0 h-auto font-normal',
     };
 
     const sizes = {
-      default: 'h-10 px-5 py-2 text-xs font-bold uppercase tracking-wider',
-      sm: 'h-8 px-3 text-xs font-semibold uppercase tracking-wider',
-      lg: 'h-12 px-7 text-sm font-bold uppercase tracking-wider',
+      default: 'h-10 px-4 py-2 text-sm',
+      sm: 'h-8 px-3 text-xs',
+      lg: 'h-11 px-6 text-base',
       icon: 'h-10 w-10 p-0',
     };
 
@@ -49,4 +49,5 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 Button.displayName = 'Button';
+
 
